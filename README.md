@@ -52,7 +52,8 @@ Data tersimpan otomatis di browser yang sama, tetapi tidak berpindah antarperang
 
 **Hammad Zahid Muharram, M.Psi., Psikolog**
 
-Untuk pertanyaan, laporan kendala, atau izin penggunaan di luar keperluan pembelajaran, hubungi pengembang.
+Untuk pertanyaan, laporan kendala, atau izin penggunaan di luar keperluan pembelajaran, hubungi pengembang: 
+**zahid.muharram@unpad.ac.id**
 
 Cara mengutip:
 
