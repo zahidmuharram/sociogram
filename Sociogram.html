@@ -1,0 +1,2014 @@
+<!doctype html>
+<html lang="id"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Hammad Zahid Muharram, M.Psi., Psikolog">
+<meta name="description" content="Sosiogram: indeks kelompok dan klasifikasi status dari pilihan anggota untuk asesmen psikologi di setting komunitas.">
+<style>:root{color-scheme:light}body{margin:0;background:#f2f4f8;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Sosiogram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600;7..72,700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Tata letak: kepala + tab, lalu satu panel aktif. Sosiogram = panel kontrol kiri, kertas gambar kanan.
+   Kertas gambar selalu putih (untuk cetak), sisanya mengikuti tema. */
+:root {
+  --bg: #f2f4f8; --surface: #ffffff; --surface2: #eaeef4; --ink: #1a2030; --muted: #566074; --line: #d3d9e3;
+  --accent: #1d5c8c; --accent-ink: #ffffff; --accent-soft: #dbeaf6;
+  --warn: #8a4b00; --warn-bg: #fcefd6; --bad: #b3261e; --bad-bg: #fbe4e2; --ok: #1b7a3a;
+  --f-display: 'Literata', Georgia, 'Times New Roman', serif;
+  --f-body: 'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131a; --surface: #171c25; --surface2: #202735; --ink: #e6eaf2; --muted: #9aa4b7; --line: #2b3343;
+    --accent: #7db4e3; --accent-ink: #0c1620; --accent-soft: #1a2a3a;
+    --warn: #f0bd6a; --warn-bg: #33270f; --bad: #ff9088; --bad-bg: #3a1a18; --ok: #77d492;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131a; --surface: #171c25; --surface2: #202735; --ink: #e6eaf2; --muted: #9aa4b7; --line: #2b3343;
+  --accent: #7db4e3; --accent-ink: #0c1620; --accent-soft: #1a2a3a;
+  --warn: #f0bd6a; --warn-bg: #33270f; --bad: #ff9088; --bad-bg: #3a1a18; --ok: #77d492;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 14px; line-height: 1.5; padding-inline: 16px; padding-block: 0 40px; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; font-weight: 700; text-wrap: balance; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1260px; margin-inline: auto; }
+.muted { color: var(--muted); }
+
+.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; padding-block: 18px 12px; }
+.brand h1 { font-size: 24px; letter-spacing: -0.01em; }
+.brand p { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; font-weight: 500; font-size: 13px; line-height: 1.3; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.subtle { background: transparent; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.icon { background: none; border: 0; cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 8px; color: var(--muted); border-radius: 4px; }
+.icon:hover { color: var(--bad); background: var(--bad-bg); }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; overflow-x: auto; }
+.tabs button { background: none; border: 0; padding: 10px 16px; cursor: pointer; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+.banner { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); border-radius: 8px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 13px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; min-width: 0; }
+.card + .card { margin-top: 16px; }
+.card h2 { font-size: 17px; margin-bottom: 4px; }
+.card .lead { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+.card h3 { font-size: 14px; margin: 16px 0 6px; font-family: var(--f-body); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 16px; }
+label.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); min-width: 0; }
+label.f > span.hint { font-weight: 400; }
+input[type=text], input[type=number], select, textarea { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; width: 100%; min-width: 0; color: var(--ink); font-size: 14px; }
+textarea { resize: vertical; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+.crit { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: var(--surface2); }
+.crit + .crit { margin-top: 10px; }
+.crit-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.crit-head input { font-weight: 600; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; display: inline-block; }
+.crit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 14px; margin-bottom: 10px; align-items: end; }
+.wts { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.wts input { width: 64px; }
+.wts b { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+.paste { margin-bottom: 12px; }
+.paste textarea { min-height: 120px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; }
+.tblwrap { overflow: auto; max-width: 100%; max-height: 70vh; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--surface2); font-size: 12px; z-index: 1; padding: 8px 8px; }
+.dt td input, .dt td select { min-width: 110px; padding: 5px 7px; font-size: 13px; }
+.dt td.no { color: var(--muted); text-align: right; width: 36px; }
+.dt td input.nm { min-width: 140px; font-weight: 600; }
+.dt td input.bad { border-color: var(--bad); background: var(--bad-bg); }
+.dt td select.jk { min-width: 62px; }
+th.ch .dot { margin-right: 6px; }
+.issues { margin-top: 12px; }
+.issue-box { border: 1px solid var(--warn); background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 10px 14px; font-size: 13px; }
+.issue-box ul { margin: 6px 0 0; padding-left: 18px; }
+.ok-box { color: var(--ok); font-size: 13px; }
+
+.sg { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; }
+.ctl { display: flex; flex-direction: column; gap: 14px; }
+.ctl .card + .card { margin-top: 0; }
+.ctl fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.ctl legend { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 8px; }
+.ctl .row { display: flex; flex-direction: column; gap: 10px; }
+.chk { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; cursor: pointer; }
+.chk input { margin-top: 3px; accent-color: var(--accent); }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.seg button { background: var(--surface2); border: 1px solid var(--line); border-radius: 6px; padding: 8px 6px; cursor: pointer; font-size: 13px; font-weight: 600; text-align: left; line-height: 1.3; }
+.seg button small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
+.seg button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.stage { min-width: 0; }
+.paper { background: #ffffff; color: #1a2030; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; position: relative; }
+.paper svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
+.paper.busy::after { content: 'Menyusun tata letak…'; position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.8); color: #1a2030; font-weight: 600; }
+.paper .empty { padding: 60px 20px; text-align: center; color: #566074; }
+.detail { margin-top: 12px; font-size: 13px; }
+.detail .card { padding: 12px 14px; }
+.cat { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #1a2030; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.stats div { background: var(--surface); padding: 10px 12px; }
+.stats dt { font-size: 12px; color: var(--muted); }
+.stats dd { margin: 2px 0 0; font-size: 20px; font-weight: 700; font-family: var(--f-display); font-variant-numeric: tabular-nums; }
+.stats dd small { font-size: 12px; font-weight: 500; font-family: var(--f-body); color: var(--muted); }
+.narr p { margin: 0 0 10px; max-width: 75ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); border-radius: 14px; padding: 2px 10px; font-size: 12.5px; background: var(--surface2); }
+.rtbl td, .rtbl th { padding: 6px 9px; }
+.rtbl td.num, .rtbl th.num { text-align: right; }
+.rtbl tbody tr:hover { background: var(--surface2); }
+.mx td, .mx th { padding: 2px 3px; text-align: center; font-size: 11.5px; min-width: 22px; border: 1px solid var(--line); }
+.mx th { position: static; }
+.mx td.self { background: var(--surface2); }
+.mx td.neg { color: var(--bad); font-weight: 700; }
+.mx .rl { text-align: left; white-space: nowrap; padding-inline: 6px; font-weight: 600; }
+.row-between { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.note { font-size: 12.5px; color: var(--muted); max-width: 80ch; }
+
+.credit { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 24px; justify-content: space-between; }
+.credit strong { color: var(--ink); font-weight: 600; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 13px; max-width: calc(100vw - 32px); z-index: 10; opacity: 0; pointer-events: none; transition: opacity .2s; }
+#toast.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+@media (max-width: 900px) {
+  .sg { grid-template-columns: minmax(0, 1fr); }
+  .brand h1 { font-size: 21px; }
+}
+</style>
+
+</head><body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Sosiogram</h1>
+      <p id="ctxLine">Sosiogram, indeks kelompok, dan klasifikasi status dari pilihan anggota.</p>
+    </div>
+    <div class="top-actions">
+      <button class="btn" id="btnSample2" type="button">Contoh 1 kriteria</button>
+      <button class="btn" id="btnSample3" type="button">Contoh lebih dari satu kriteria</button>
+      <button class="btn" id="btnSaveProj" type="button">Simpan proyek</button>
+      <label class="btn" for="fileProject">Buka proyek</label>
+      <input type="file" id="fileProject" accept=".json,application/json" hidden>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Bagian aplikasi">
+    <button type="button" role="tab" data-tab="instrumen" aria-selected="false">1. Instrumen</button>
+    <button type="button" role="tab" data-tab="data" aria-selected="false">2. Data</button>
+    <button type="button" role="tab" data-tab="sosiogram" aria-selected="true">3. Sosiogram</button>
+    <button type="button" role="tab" data-tab="hasil" aria-selected="false">4. Hasil</button>
+  </nav>
+
+  <div id="banner" class="banner" hidden>
+    <span>Data yang tampil adalah contoh data yang digenerate secara acak, bukan data sungguhan.</span>
+    <button class="btn" id="btnClear" type="button">Kosongkan dan gunakan data sendiri</button>
+  </div>
+
+  <!-- ===== Instrumen ===== -->
+  <section class="panel" id="p-instrumen" hidden>
+    <div class="card">
+      <h2>Kegiatan</h2>
+      <p class="lead">Judul muncul di sosiogram. Konteks menentukan istilah, label kolom grup, dan catatan pada hasil.</p>
+      <div class="grid2">
+        <label class="f">Judul
+          <input type="text" id="title" placeholder="mis. Karang Taruna RW 05, September 2026">
+        </label>
+        <label class="f">Penanggung jawab data
+          <input type="text" id="owner" placeholder="Nama pengambil data" autocomplete="name">
+          <span class="hint">Tercetak pada gambar dan Excel hasil ekspor.</span>
+        </label>
+        <label class="f">Konteks pemakaian
+          <select id="context">
+            <option value="informal">Kelompok pertemanan</option>
+            <option value="ormas">Organisasi masyarakat (Karang Taruna, PKK, kelompok tani, kader)</option>
+            <option value="warga">Warga satu lingkungan (RT, RW, dusun)</option>
+            <option value="dampingan">Kelompok dampingan atau layanan (sebaya, dukungan, binaan)</option>
+            <option value="organisasi">Organisasi (kerja atau kampus)</option>
+            <option value="kelas">Kelas atau pelatihan</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Kriteria pilihan</h2>
+      <p class="lead">Setiap kriteria adalah satu pertanyaan sosiometrik. Maksimal 4 kriteria, masing-masing 1 sampai 3 pilihan. Kriteria negatif (menolak) tidak masuk skor status, tetapi dipakai untuk klasifikasi Coie.</p>
+      <div class="presets">
+        <button class="btn" type="button" data-preset="satu">Satu kriteria, 2 pilihan</button>
+        <button class="btn" type="button" data-preset="tiga">Tiga kriteria (dekat, kerja sama, tempat bertanya)</button>
+        <button class="btn" type="button" data-preset="komunitas">Komunitas (bantuan, kepemimpinan, musyawarah)</button>
+        <button class="btn" type="button" data-preset="tolak">Memilih dan menolak</button>
+      </div>
+      <div id="critList"></div>
+      <div class="acts"><button class="btn" id="addCrit" type="button">Tambah kriteria</button></div>
+    </div>
+
+    <div class="card">
+      <h2>Kategori status</h2>
+      <p class="lead">Skor status adalah jumlah pilihan yang diterima dikali bobot peringkat. Kategori ditentukan dari skor baku (z) terhadap rata-rata kelompok. Skor nol selalu berarti isolat.</p>
+      <div class="grid2">
+        <label class="f">Batas populer (z ≥)
+          <input type="number" id="zHigh" step="0.1" min="0" max="3">
+          <span class="hint">Standar 1,0 SD di atas rata-rata.</span>
+        </label>
+        <label class="f">Batas terabaikan (z ≤)
+          <input type="number" id="zLow" step="0.1" min="-3" max="0">
+          <span class="hint">Standar −0,5 hingga −1,0 SD. Di antara dua batas: rata-rata.</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Data ===== -->
+  <section class="panel" id="p-data" hidden>
+    <div class="card">
+      <h2>Data pilihan</h2>
+      <p class="lead">Satu baris per anggota. Kolom pilihan diisi nama (atau nomor urut) anggota yang dipilih. Nama tidak perlu ditulis lengkap selama tidak ambigu.</p>
+      <div class="toolbar">
+        <button class="btn primary" id="addMember" type="button">Tambah anggota</button>
+        <button class="btn" id="togglePaste" type="button">Tempel dari Excel</button>
+        <label class="btn" for="fileData">Unggah Excel/CSV</label>
+        <input type="file" id="fileData" accept=".xlsx,.xls,.csv,.tsv,.txt" hidden>
+        <button class="btn" id="btnTemplate" type="button">Unduh templat</button>
+        <button class="btn subtle" id="btnClearMembers" type="button">Kosongkan tabel</button>
+      </div>
+      <div class="paste" id="pasteBox" hidden>
+        <p class="note" id="pasteHint" style="margin-bottom:6px"></p>
+        <textarea id="pasteArea" spellcheck="false" aria-label="Tempel tabel dari Excel"></textarea>
+        <div class="acts"><button class="btn primary" id="applyPaste" type="button">Terapkan</button></div>
+      </div>
+      <div class="tblwrap"><div id="dataTable"></div></div>
+      <div class="issues" id="issues"></div>
+      <datalist id="names"></datalist>
+    </div>
+  </section>
+
+  <!-- ===== Sosiogram ===== -->
+  <section class="panel" id="p-sosiogram">
+    <div class="sg">
+      <aside class="ctl" id="controls" aria-label="Pengaturan tampilan"></aside>
+      <div class="stage">
+        <div class="paper" id="paper"></div>
+        <div class="detail" id="detail"></div>
+        <div class="acts">
+          <button class="btn primary" id="btnPng" type="button">Unduh PNG</button>
+          <button class="btn" id="btnSvg" type="button">Unduh SVG</button>
+          <button class="btn" id="btnRelayout" type="button">Acak ulang tata letak</button>
+        </div>
+        <p class="issue-box" id="ownerHint" style="margin-top:12px" hidden>Nama penanggung jawab data belum diisi, sehingga gambar hasil ekspor akan bertanda “(belum diisi)”. <button class="btn" type="button" data-goto="instrumen">Isi di tab Instrumen</button></p>
+        <p class="note" style="margin-top:10px">Klik simpul untuk menyorot pilihannya, seret untuk memindahkan. Di model target, posisi sudut dan jarak dalam satu cincin tidak bermakna. Yang bermakna adalah cincinnya.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Hasil ===== -->
+  <section class="panel" id="p-hasil" hidden>
+    <div id="results"></div>
+  </section>
+  <footer class="credit">
+    <p>Sosiogram, dikembangkan oleh <strong>Hammad Zahid Muharram, M.Psi., Psikolog</strong></p>
+    <p>Data diproses di browser ini dan tidak dikirim ke server. Hasil adalah bahan awal asesmen dan perlu dilengkapi observasi dan wawancara.</p>
+  </footer>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* Sosiogram - logika inti: analisis, tata letak, render SVG */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.Socio = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  /* ---------- utilitas ---------- */
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  var clamp = function (x, a, b) { return Math.max(a, Math.min(b, x)); };
+  var norm = function (s) { return String(s == null ? '' : s).trim().replace(/\s+/g, ' ').toLowerCase(); };
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  };
+  function mean(a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : 0; }
+  function sd(a) {
+    if (!a.length) return 0;
+    var m = mean(a);
+    return Math.sqrt(mean(a.map(function (x) { return (x - m) * (x - m); })));
+  }
+
+  var CATS = ['bintang', 'rata', 'abai', 'isolat'];
+  var CAT_LABEL = { bintang: 'Populer', rata: 'Rata-rata', abai: 'Terabaikan', isolat: 'Isolat' };
+  var CAT_FILL = { bintang: '#f4c542', rata: '#cfe2f5', abai: '#f2cdbd', isolat: '#d7d7d7' };
+  var RANK_COLOR = { 1: '#e2343b', 2: '#17963f', 3: '#2668d0' };
+  var CRIT_COLOR = ['#d6303b', '#17963f', '#2668d0', '#c07a08'];
+  var MUTUAL_COLOR = '#1f78c8', ONEWAY_COLOR = '#2b2f38', NEG_COLOR = '#8a3fb0';
+  var GROUP_FILL = ['#dbe9d3', '#e2dcf6', '#fbe3c4', '#d0e8ef', '#f3d5dc', '#e8e6c3', '#d9d9ee', '#cfe6d8'];
+  var GENDER_FILL = { L: '#d7ebd0', P: '#dedbf7', '': '#ececec' };
+  var FONT = 'Arial, Helvetica, sans-serif';
+
+  /* ---------- pembacaan nama pilihan ---------- */
+  function buildIndex(members) {
+    var exact = new Map();
+    members.forEach(function (m, i) {
+      var k = norm(m.name);
+      if (!k) return;
+      if (!exact.has(k)) exact.set(k, []);
+      exact.get(k).push(i);
+    });
+    return exact;
+  }
+
+  function resolveRef(raw, members, exact) {
+    var t = norm(raw);
+    if (!t) return { status: 'empty' };
+    if (exact.has(t)) {
+      var a = exact.get(t);
+      return a.length === 1 ? { status: 'ok', idx: a[0] } : { status: 'ambiguous', cands: a };
+    }
+    if (/^\d+$/.test(t)) {
+      var n = +t;
+      if (n >= 1 && n <= members.length) return { status: 'ok', idx: n - 1 };
+    }
+    var cands = [];
+    members.forEach(function (m, i) {
+      var k = norm(m.name);
+      if (!k) return;
+      if (k.indexOf(t) === 0 || k.split(' ').indexOf(t) >= 0) cands.push(i);
+    });
+    if (cands.length === 1) return { status: 'ok', idx: cands[0], fuzzy: true };
+    if (cands.length > 1) return { status: 'ambiguous', cands: cands };
+    return { status: 'unknown' };
+  }
+
+  function buildEdges(project) {
+    var members = project.members, crits = project.criteria;
+    var exact = buildIndex(members);
+    var edges = [], issues = [];
+    members.forEach(function (m, i) {
+      var ch = (project.choices && project.choices[i]) || {};
+      crits.forEach(function (c) {
+        var arr = ch[c.id] || [];
+        var seen = new Set();
+        for (var k = 0; k < c.picks; k++) {
+          var raw = arr[k];
+          var r = resolveRef(raw, members, exact);
+          if (r.status === 'empty') continue;
+          var base = { member: i, crit: c.id, pick: k + 1, text: String(raw).trim() };
+          if (r.status === 'unknown') { issues.push(Object.assign({ type: 'unknown' }, base)); continue; }
+          if (r.status === 'ambiguous') { issues.push(Object.assign({ type: 'ambiguous' }, base)); continue; }
+          if (r.idx === i) { issues.push(Object.assign({ type: 'self' }, base)); continue; }
+          if (seen.has(r.idx)) { issues.push(Object.assign({ type: 'duplicate' }, base)); continue; }
+          seen.add(r.idx);
+          edges.push({ from: i, to: r.idx, c: c.id, rank: k + 1, type: c.type });
+        }
+      });
+    });
+    return { edges: edges, issues: issues };
+  }
+
+  /* ---------- analisis ---------- */
+  function analyze(project, activeIds, opts) {
+    opts = opts || {};
+    var zHigh = opts.zHigh != null ? opts.zHigh : 1;
+    var zLow = opts.zLow != null ? opts.zLow : -0.5;
+    var members = project.members, N = members.length;
+    var activeSet = new Set(activeIds);
+    var crits = project.criteria.filter(function (c) { return activeSet.has(c.id); });
+    var critMap = {};
+    project.criteria.forEach(function (c) { critMap[c.id] = c; });
+    var be = buildEdges(project);
+    var act = be.edges.filter(function (e) { return activeSet.has(e.c); });
+    var pos = act.filter(function (e) { return e.type === 'pos'; });
+    var neg = act.filter(function (e) { return e.type === 'neg'; });
+    var weight = function (e) {
+      var w = critMap[e.c].weights[e.rank - 1];
+      return w == null || isNaN(w) ? 1 : w;
+    };
+
+    var ms = members.map(function (m, i) {
+      var recv = {};
+      project.criteria.forEach(function (c) { recv[c.id] = [0, 0, 0]; });
+      return {
+        idx: i, no: i + 1, name: m.name || ('Anggota ' + (i + 1)), gender: m.gender || '', group: m.group || '',
+        recv: recv, recvN: 0, recvSet: new Set(), score: 0, z: 0, cat: 'rata',
+        out: [], outNeg: [], mutualWith: [], negRecv: 0, chosenBy: [], chosenByNeg: []
+      };
+    });
+
+    be.edges.forEach(function (e) {
+      if (e.type === 'pos') ms[e.to].recv[e.c][e.rank - 1]++;
+    });
+    pos.forEach(function (e) {
+      var t = ms[e.to];
+      t.recvN++; t.recvSet.add(e.from);
+      t.score += weight(e);
+      t.chosenBy.push({ from: e.from, c: e.c, rank: e.rank });
+      ms[e.from].out.push({ to: e.to, c: e.c, rank: e.rank });
+    });
+    neg.forEach(function (e) {
+      ms[e.to].negRecv++;
+      ms[e.to].chosenByNeg.push({ from: e.from, c: e.c, rank: e.rank });
+      ms[e.from].outNeg.push({ to: e.to, c: e.c, rank: e.rank });
+    });
+
+    var scores = ms.map(function (m) { return m.score; });
+    var mu = mean(scores), sig = sd(scores);
+    ms.forEach(function (m) {
+      m.z = sig > 0 ? (m.score - mu) / sig : 0;
+      m.recvDistinct = m.recvSet.size;
+      m.statusIndex = N > 1 ? m.recvDistinct / (N - 1) : 0;
+      if (m.score === 0) m.cat = 'isolat';
+      else if (m.z >= zHigh) m.cat = 'bintang';
+      else if (m.z <= zLow) m.cat = 'abai';
+      else m.cat = 'rata';
+    });
+
+    // timbal balik (kriteria yang sama, dua arah)
+    var keySet = new Set(pos.map(function (e) { return e.from + '|' + e.to + '|' + e.c; }));
+    var pairMap = new Map();
+    pos.forEach(function (e) {
+      if (!keySet.has(e.to + '|' + e.from + '|' + e.c)) return;
+      var a = Math.min(e.from, e.to), b = Math.max(e.from, e.to), k = a + '|' + b;
+      if (!pairMap.has(k)) pairMap.set(k, { a: a, b: b, crits: new Set(), ranks: {} });
+      var p = pairMap.get(k);
+      p.crits.add(e.c);
+      p.ranks[e.from + '>' + e.to + ':' + e.c] = e.rank;
+    });
+    var mutualPairs = Array.from(pairMap.values()).map(function (p) {
+      p.critList = Array.from(p.crits);
+      return p;
+    });
+    mutualPairs.forEach(function (p) {
+      ms[p.a].mutualWith.push(p.b); ms[p.b].mutualWith.push(p.a);
+    });
+    var mutualEdgeCount = pos.filter(function (e) { return keySet.has(e.to + '|' + e.from + '|' + e.c); }).length;
+
+    // komponen timbal balik (klik)
+    var parent = ms.map(function (_, i) { return i; });
+    var find = function (x) { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+    mutualPairs.forEach(function (p) { parent[find(p.a)] = find(p.b); });
+    var comps = new Map();
+    ms.forEach(function (m, i) {
+      if (!m.mutualWith.length) return;
+      var r = find(i);
+      if (!comps.has(r)) comps.set(r, []);
+      comps.get(r).push(i);
+    });
+    var cliques = Array.from(comps.values()).sort(function (x, y) { return y.length - x.length; });
+    ms.forEach(function (m) { m.comp = -1; });
+    cliques.forEach(function (c, ci) { c.forEach(function (i) { ms[i].comp = ci; }); });
+
+    // Coie (butuh kriteria positif dan negatif aktif)
+    var coie = null;
+    if (pos.length && neg.length && N > 2) {
+      var lm = ms.map(function (m) { return m.recvN; });
+      var ll = ms.map(function (m) { return m.negRecv; });
+      var zs = function (arr) { var m = mean(arr), s = sd(arr); return arr.map(function (x) { return s > 0 ? (x - m) / s : 0; }); };
+      var zlm = zs(lm), zll = zs(ll);
+      var sp = zlm.map(function (v, i) { return v - zll[i]; });
+      var si = zlm.map(function (v, i) { return v + zll[i]; });
+      var zsp = zs(sp), zsi = zs(si);
+      coie = ms.map(function (m, i) {
+        var t = 'Rata-rata';
+        if (zsp[i] > 1 && zlm[i] > 0 && zll[i] < 0) t = 'Populer';
+        else if (zsp[i] < -1 && zll[i] > 0 && zlm[i] < 0) t = 'Ditolak';
+        else if (zsi[i] < -1 && zlm[i] < 0 && zll[i] < 0) t = 'Terabaikan';
+        else if (zsi[i] > 1 && zlm[i] > 0 && zll[i] > 0) t = 'Kontroversial';
+        m.coie = t;
+        return { idx: i, lm: lm[i], ll: ll[i], sp: zsp[i], si: zsi[i], type: t };
+      });
+    }
+
+    // indeks kelompok
+    var hasGender = new Set(ms.map(function (m) { return m.gender; }).filter(Boolean)).size >= 2;
+    var hasGroup = new Set(ms.map(function (m) { return m.group; }).filter(Boolean)).size >= 2;
+    var sameShare = function (key) {
+      if (!pos.length) return null;
+      var vals = ms.map(function (m) { return m[key]; });
+      var same = 0, tot = 0;
+      pos.forEach(function (e) {
+        if (!vals[e.from] || !vals[e.to]) return;
+        tot++; if (vals[e.from] === vals[e.to]) same++;
+      });
+      if (!tot) return null;
+      var exp = 0, n = 0;
+      ms.forEach(function (m, i) {
+        if (!vals[i]) return;
+        var cnt = 0, others = 0;
+        ms.forEach(function (o, j) { if (j !== i && vals[j]) { others++; if (vals[j] === vals[i]) cnt++; } });
+        if (others) { exp += cnt / others; n++; }
+      });
+      return { observed: same / tot, expected: n ? exp / n : null, n: tot };
+    };
+    var possiblePairs = N * (N - 1) / 2;
+    var summary = {
+      N: N, nPos: pos.length, nNeg: neg.length,
+      mean: mu, sd: sig, zHigh: zHigh, zLow: zLow,
+      counts: {}, mutualPairs: mutualPairs.length,
+      cohesion: possiblePairs ? mutualPairs.length / possiblePairs : 0,
+      reciprocity: pos.length ? mutualEdgeCount / pos.length : 0,
+      density: N > 1 ? pos.length / (N * (N - 1)) : 0,
+      avgReceived: N ? pos.length / N : 0,
+      cliques: cliques.length,
+      gender: hasGender ? sameShare('gender') : null,
+      group: hasGroup ? sameShare('group') : null,
+      starShare: 0
+    };
+    CATS.forEach(function (k) { summary.counts[k] = ms.filter(function (m) { return m.cat === k; }).length; });
+    var starScore = ms.filter(function (m) { return m.cat === 'bintang'; }).reduce(function (a, m) { return a + m.recvN; }, 0);
+    summary.starShare = pos.length ? starScore / pos.length : 0;
+
+    // per kriteria
+    var perCrit = crits.map(function (c) {
+      var es = be.edges.filter(function (e) { return e.c === c.id; });
+      var key = new Set(es.map(function (e) { return e.from + '|' + e.to; }));
+      var mut = es.filter(function (e) { return key.has(e.to + '|' + e.from); }).length;
+      var received = ms.map(function (m) { return m.recv[c.id][0] + m.recv[c.id][1] + m.recv[c.id][2]; });
+      var recvAll = new Array(N).fill(0);
+      es.forEach(function (e) { recvAll[e.to]++; });
+      return {
+        crit: c, edges: es.length, mutualPairs: mut / 2,
+        isolates: recvAll.filter(function (x) { return x === 0; }).length,
+        top: ms.map(function (m, i) { return { m: m, n: recvAll[i] }; })
+          .sort(function (x, y) { return y.n - x.n; }).slice(0, 3)
+      };
+    });
+
+    return {
+      N: N, members: ms, project: project, crits: crits, critMap: critMap,
+      edges: be.edges, actEdges: act, posEdges: pos, negEdges: neg,
+      issues: be.issues, mutualPairs: mutualPairs, cliques: cliques, coie: coie,
+      summary: summary, perCrit: perCrit, keySet: keySet, weight: weight
+    };
+  }
+
+  /* ---------- ukuran simpul ---------- */
+  function nodeGeom(m, view) {
+    var label = view.label || 'nomor';
+    var g = m.gender;
+    if (label === 'nama') {
+      var txt = m.name;
+      var w = Math.max(46, txt.length * 6.3 + 20);
+      if (g === 'P') return { kind: 'rect', hw: w / 2, hh: 13, rx: 5 };
+      if (g === 'L') return { kind: 'ellipse', hw: w / 2 * 1.08, hh: 15 };
+      return { kind: 'rect', hw: w / 2, hh: 13, rx: 13 };
+    }
+    var r = String(m.no).length >= 3 ? 13.5 : 11.5;
+    if (g === 'P') return { kind: 'rect', hw: r, hh: r, rx: 1.5 };
+    if (g === 'L') return { kind: 'ellipse', hw: r, hh: r };
+    return { kind: 'diamond', hw: r + 3, hh: r + 3 };
+  }
+
+  function boundaryDist(geom, dx, dy) {
+    var L = Math.hypot(dx, dy) || 1;
+    var ux = dx / L, uy = dy / L, ax = Math.abs(ux), ay = Math.abs(uy);
+    if (geom.kind === 'rect') {
+      var t = Math.min(ax > 1e-9 ? geom.hw / ax : Infinity, ay > 1e-9 ? geom.hh / ay : Infinity);
+      return t;
+    }
+    if (geom.kind === 'diamond') return 1 / (ax / geom.hw + ay / geom.hh);
+    return 1 / Math.sqrt((ux / geom.hw) * (ux / geom.hw) + (uy / geom.hh) * (uy / geom.hh));
+  }
+
+  /* ---------- tata letak: target ---------- */
+  var CANVAS = { W: 1000, H: 720 };
+
+  function segCross(p1, p2, p3, p4) {
+    var d1x = p2.x - p1.x, d1y = p2.y - p1.y, d2x = p4.x - p3.x, d2y = p4.y - p3.y;
+    var den = d1x * d2y - d1y * d2x;
+    if (Math.abs(den) < 1e-9) return false;
+    var t = ((p3.x - p1.x) * d2y - (p3.y - p1.y) * d2x) / den;
+    var u = ((p3.x - p1.x) * d1y - (p3.y - p1.y) * d1x) / den;
+    return t > 0.001 && t < 0.999 && u > 0.001 && u < 0.999;
+  }
+
+  function bandRadii(counts) {
+    var areas = counts.map(function (n) { return n + 1.2; });
+    var tot = areas.reduce(function (a, b) { return a + b; }, 0), cum = 0;
+    var r = [], minW = [0.17, 0.13, 0.13, 0.11];
+    areas.forEach(function (a, k) {
+      cum += a;
+      var f = Math.sqrt(cum / tot);
+      var prev = k ? r[k - 1] : 0;
+      r.push(Math.max(f, prev + minW[k]));
+    });
+    var top = r[r.length - 1];
+    return r.map(function (x) { return x / top; });
+  }
+
+  function layoutTarget(an, view, seed) {
+    var W = CANVAS.W, H = CANVAS.H, cx = 395, cy = 372, Rmax = 322;
+    var N = an.N, rnd = mulberry32(seed || 1);
+    var counts = CATS.map(function (k) { return an.members.filter(function (m) { return m.cat === k; }).length; });
+    var rf = bandRadii(counts).map(function (f) { return f * Rmax; });
+    var geoms = an.members.map(function (m) { return nodeGeom(m, view); });
+
+    // pasangan tak-berarah dari pilihan positif aktif
+    var pairSet = new Set(), E = [];
+    an.posEdges.forEach(function (e) {
+      var a = Math.min(e.from, e.to), b = Math.max(e.from, e.to), k = a + '|' + b;
+      if (!pairSet.has(k)) { pairSet.add(k); E.push([a, b]); }
+    });
+    var inc = an.members.map(function () { return []; });
+    E.forEach(function (p, i) { inc[p[0]].push(i); inc[p[1]].push(i); });
+
+    var bandOf = an.members.map(function (m) { return CATS.indexOf(m.cat); });
+    var lo = function (k) { return k ? rf[k - 1] : 0; };
+    var st = an.members.map(function () { return { ang: 0, rad: 0 }; });
+    var byBand = CATS.map(function (_, k) {
+      return an.members.filter(function (m, i) { return bandOf[i] === k; })
+        .sort(function (a, b) { return b.score - a.score; });
+    });
+    byBand.forEach(function (list, k) {
+      list.forEach(function (m, pos) {
+        var t = list.length > 1 ? pos / (list.length - 1) : 0.5;
+        var a = lo(k), b = rf[k];
+        var rad = a + (b - a) * (0.22 + 0.56 * t);
+        if (k === 0 && list.length === 1) rad = 0;
+        st[m.idx].rad = rad;
+        st[m.idx].ang = rnd() * Math.PI * 2;
+      });
+    });
+    var P = function (i) { return { x: cx + st[i].rad * Math.cos(st[i].ang), y: cy + st[i].rad * Math.sin(st[i].ang) }; };
+    var pts = an.members.map(function (_, i) { return P(i); });
+
+    var overlapPen = function (i) {
+      var s = 0, gi = geoms[i], pi = pts[i];
+      for (var j = 0; j < N; j++) {
+        if (j === i) continue;
+        var gj = geoms[j], dx = Math.abs(pi.x - pts[j].x), dy = Math.abs(pi.y - pts[j].y);
+        var ox = gi.hw + gj.hw + 5 - dx, oy = gi.hh + gj.hh + 5 - dy;
+        if (ox > 0 && oy > 0) { var d = Math.min(ox, oy); s += (d / 8) * (d / 8) * 3; }
+      }
+      return s;
+    };
+    var nodeCost = function (v) {
+      var c = 0, i, j, e, f;
+      for (i = 0; i < inc[v].length; i++) {
+        e = E[inc[v][i]];
+        var dx = pts[e[0]].x - pts[e[1]].x, dy = pts[e[0]].y - pts[e[1]].y;
+        c += 0.12 * (Math.hypot(dx, dy) / 100) * (Math.hypot(dx, dy) / 100);
+        for (j = 0; j < E.length; j++) {
+          f = E[j];
+          if (f[0] === e[0] || f[0] === e[1] || f[1] === e[0] || f[1] === e[1]) continue;
+          if (segCross(pts[e[0]], pts[e[1]], pts[f[0]], pts[f[1]])) c += 1;
+        }
+      }
+      return c + overlapPen(v);
+    };
+
+    if (N > 1) {
+      var iters = Math.min(N > 60 ? 40000 : 70000, 2500 * N + 8000);
+      var T0 = 2.2, T1 = 0.03;
+      var bandLo = function (v) { var k = bandOf[v]; return k ? rf[k - 1] + 14 : 0; };
+      var bandHi = function (v) { var k = bandOf[v]; return rf[k] - 14; };
+      for (var it = 0; it < iters; it++) {
+        var T = T0 * Math.pow(T1 / T0, it / iters);
+        var v = Math.floor(rnd() * N);
+        var old = { ang: st[v].ang, rad: st[v].rad };
+        var before = nodeCost(v);
+        var mv = rnd();
+        if (mv < 0.55) st[v].ang += (rnd() - 0.5) * 2 * Math.PI * (0.05 + 0.5 * (1 - it / iters));
+        else if (mv < 0.7) st[v].ang = rnd() * Math.PI * 2;
+        else {
+          var k = bandOf[v];
+          if (!(k === 0 && byBand[0].length === 1)) {
+            var a = bandLo(v), b = Math.max(a, bandHi(v));
+            st[v].rad = clamp(st[v].rad + (rnd() - 0.5) * (b - a) * 0.6, a, b);
+          }
+        }
+        pts[v] = P(v);
+        var after = nodeCost(v);
+        var d = after - before;
+        if (d > 0 && rnd() >= Math.exp(-d / T)) { st[v].ang = old.ang; st[v].rad = old.rad; pts[v] = P(v); }
+      }
+    }
+    return { model: 'target', pos: pts.map(function (p) { return { x: p.x, y: p.y }; }), cx: cx, cy: cy, radii: rf, counts: counts, W: W, H: H };
+  }
+
+  /* ---------- tata letak: jaringan ---------- */
+  function layoutNetwork(an, view, seed) {
+    var W = CANVAS.W, H = CANVAS.H, rnd = mulberry32((seed || 1) * 7919);
+    var N = an.N, area = { x0: 40, x1: 770, y0: 56, y1: 650 };
+    var geoms = an.members.map(function (m) { return nodeGeom(m, view); });
+    var keyOf = function (m) {
+      if (view.groupBy === 'gender') return m.gender || '?';
+      if (view.groupBy === 'group') return m.group || '?';
+      return 'x';
+    };
+    var gkeys = Array.from(new Set(an.members.map(keyOf)));
+    var gc = {};
+    var acx = (area.x0 + area.x1) / 2, acy = (area.y0 + area.y1) / 2;
+    gkeys.forEach(function (k, i) {
+      if (gkeys.length === 1) gc[k] = { x: acx, y: acy };
+      else if (gkeys.length === 2) gc[k] = { x: acx + (i ? 1 : -1) * 185, y: acy };
+      else {
+        var a = -Math.PI / 2 + i * 2 * Math.PI / gkeys.length;
+        gc[k] = { x: acx + Math.cos(a) * 230, y: acy + Math.sin(a) * 200 };
+      }
+    });
+    var pos = an.members.map(function (m) {
+      var c = gc[keyOf(m)];
+      return { x: c.x + (rnd() - 0.5) * 220, y: c.y + (rnd() - 0.5) * 220, dx: 0, dy: 0 };
+    });
+    var pairW = new Map();
+    an.posEdges.forEach(function (e) {
+      var a = Math.min(e.from, e.to), b = Math.max(e.from, e.to), k = a + '|' + b;
+      var mut = an.keySet.has(e.to + '|' + e.from + '|' + e.c);
+      pairW.set(k, Math.max(pairW.get(k) || 0, mut ? 1.7 : 1));
+    });
+    var E = Array.from(pairW.entries()).map(function (kv) {
+      var p = kv[0].split('|'); return [+p[0], +p[1], kv[1]];
+    });
+    var k0 = Math.sqrt(((area.x1 - area.x0) * (area.y1 - area.y0)) / Math.max(N, 1)) * 0.78;
+    var iters = 520, i, j, e;
+    for (var it = 0; it < iters; it++) {
+      var t = 70 * Math.pow(0.02, it / iters);
+      for (i = 0; i < N; i++) { pos[i].dx = 0; pos[i].dy = 0; }
+      for (i = 0; i < N; i++) for (j = i + 1; j < N; j++) {
+        var dx = pos[i].x - pos[j].x, dy = pos[i].y - pos[j].y;
+        var d = Math.hypot(dx, dy) || 0.01;
+        var f = (k0 * k0) / d;
+        dx /= d; dy /= d;
+        pos[i].dx += dx * f; pos[i].dy += dy * f; pos[j].dx -= dx * f; pos[j].dy -= dy * f;
+      }
+      for (i = 0; i < E.length; i++) {
+        e = E[i];
+        var ddx = pos[e[0]].x - pos[e[1]].x, ddy = pos[e[0]].y - pos[e[1]].y;
+        var dd = Math.hypot(ddx, ddy) || 0.01;
+        var ff = (dd * dd) / k0 * 0.55 * e[2];
+        ddx /= dd; ddy /= dd;
+        pos[e[0]].dx -= ddx * ff; pos[e[0]].dy -= ddy * ff;
+        pos[e[1]].dx += ddx * ff; pos[e[1]].dy += ddy * ff;
+      }
+      for (i = 0; i < N; i++) {
+        var c = gc[keyOf(an.members[i])];
+        var gk = gkeys.length > 1 ? 0.05 : 0.02;
+        pos[i].dx += (c.x - pos[i].x) * gk * k0 * 0.2;
+        pos[i].dy += (c.y - pos[i].y) * gk * k0 * 0.2;
+        var L = Math.hypot(pos[i].dx, pos[i].dy) || 0.01;
+        var lim = Math.min(L, t);
+        pos[i].x += pos[i].dx / L * lim; pos[i].y += pos[i].dy / L * lim;
+      }
+    }
+    var fit = function () {
+      var minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+      pos.forEach(function (p, i) {
+        minx = Math.min(minx, p.x - geoms[i].hw); maxx = Math.max(maxx, p.x + geoms[i].hw);
+        miny = Math.min(miny, p.y - geoms[i].hh); maxy = Math.max(maxy, p.y + geoms[i].hh);
+      });
+      var sw = (area.x1 - area.x0) / Math.max(maxx - minx, 1), sh = (area.y1 - area.y0) / Math.max(maxy - miny, 1);
+      var s = Math.min(sw, sh, 1.7);
+      var ox = (area.x0 + area.x1) / 2 - ((minx + maxx) / 2) * s, oy = (area.y0 + area.y1) / 2 - ((miny + maxy) / 2) * s;
+      pos.forEach(function (p) { p.x = p.x * s + ox; p.y = p.y * s + oy; });
+    };
+    var separate = function (rounds) {
+      for (var r = 0; r < rounds; r++) {
+        var moved = false;
+        for (var a = 0; a < N; a++) for (var b = a + 1; b < N; b++) {
+          var dx = pos[b].x - pos[a].x, dy = pos[b].y - pos[a].y;
+          var ox = geoms[a].hw + geoms[b].hw + 12 - Math.abs(dx), oy = geoms[a].hh + geoms[b].hh + 10 - Math.abs(dy);
+          if (ox > 0 && oy > 0) {
+            moved = true;
+            if (ox < oy) { var sx = (dx >= 0 ? 1 : -1) * ox / 2; pos[a].x -= sx; pos[b].x += sx; }
+            else { var sy = (dy >= 0 ? 1 : -1) * oy / 2; pos[a].y -= sy; pos[b].y += sy; }
+          }
+        }
+        if (!moved) break;
+      }
+    };
+    separate(80); fit(); separate(80);
+    pos.forEach(function (p, i) {
+      p.x = clamp(p.x, area.x0 + geoms[i].hw, area.x1 - geoms[i].hw);
+      p.y = clamp(p.y, area.y0 + geoms[i].hh, area.y1 - geoms[i].hh);
+    });
+    return { model: 'network', pos: pos.map(function (p) { return { x: p.x, y: p.y }; }), W: W, H: H };
+  }
+
+  function computeLayout(an, view, seed) {
+    return view.model === 'network' ? layoutNetwork(an, view, seed) : layoutTarget(an, view, seed);
+  }
+
+  /* ---------- garis ---------- */
+  function buildLines(an, view) {
+    var raw = [];
+    an.actEdges.forEach(function (e) {
+      if (e.type === 'neg' && !view.showNeg) return;
+      var mutual = e.type === 'pos' && an.keySet.has(e.to + '|' + e.from + '|' + e.c);
+      raw.push({ from: e.from, to: e.to, c: e.c, rank: e.rank, type: e.type, mutual: mutual });
+    });
+    var lines = [];
+    if (view.mergeMutual) {
+      var merged = new Map();
+      raw.forEach(function (it) {
+        if (!it.mutual) { lines.push({ a: it.from, b: it.to, both: false, c: it.c, rank: it.rank, type: it.type, mutual: false }); return; }
+        var k = Math.min(it.from, it.to) + '|' + Math.max(it.from, it.to) + '|' + it.c;
+        var ex = merged.get(k);
+        if (!ex) {
+          ex = { a: Math.min(it.from, it.to), b: Math.max(it.from, it.to), both: true, c: it.c, rank: it.rank, type: it.type, mutual: true };
+          merged.set(k, ex); lines.push(ex);
+        } else ex.rank = Math.min(ex.rank, it.rank);
+      });
+    } else {
+      raw.forEach(function (it) { lines.push({ a: it.from, b: it.to, both: false, c: it.c, rank: it.rank, type: it.type, mutual: it.mutual }); });
+    }
+    var critIdx = {};
+    an.project.criteria.forEach(function (c, i) { critIdx[c.id] = i; });
+    lines.forEach(function (l) {
+      var color;
+      if (l.type === 'neg') color = NEG_COLOR;
+      else if (view.colorBy === 'criterion') color = CRIT_COLOR[(critIdx[l.c] || 0) % CRIT_COLOR.length];
+      else if (view.colorBy === 'mutual') color = l.mutual ? MUTUAL_COLOR : ONEWAY_COLOR;
+      else color = RANK_COLOR[l.rank] || RANK_COLOR[3];
+      var dash = '';
+      if (l.type === 'neg') dash = '1.5 4';
+      else if (view.dashBy === 'mutual') dash = l.mutual ? '' : '6 4';
+      else if (view.dashBy === 'rank') dash = l.rank === 1 ? '' : (l.rank === 2 ? '7 4' : '9 3 2 3');
+      l.color = color; l.dash = dash;
+      l.width = l.type === 'neg' ? 1.4 : (view.widthByRank ? (l.rank === 1 ? 2.1 : l.rank === 2 ? 1.6 : 1.2) : 1.7);
+    });
+    lines.sort(function (x, y) {
+      var nx = x.type === 'neg' ? 9 : 0, ny = y.type === 'neg' ? 9 : 0;
+      if (nx !== ny) return ny - nx;
+      return y.rank - x.rank;
+    });
+    return lines;
+  }
+
+  /* ---------- render SVG ---------- */
+  function shapeSVG(g, x, y, fill, stroke, sw, extra) {
+    extra = extra || '';
+    if (g.kind === 'rect')
+      return '<rect x="' + (x - g.hw).toFixed(1) + '" y="' + (y - g.hh).toFixed(1) + '" width="' + (g.hw * 2).toFixed(1) + '" height="' + (g.hh * 2).toFixed(1) + '" rx="' + (g.rx || 0) + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '" ' + extra + '/>';
+    if (g.kind === 'diamond')
+      return '<polygon points="' + [[x, y - g.hh], [x + g.hw, y], [x, y + g.hh], [x - g.hw, y]].map(function (q) { return q[0].toFixed(1) + ',' + q[1].toFixed(1); }).join(' ') + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '" ' + extra + '/>';
+    return '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="' + g.hw.toFixed(1) + '" ry="' + g.hh.toFixed(1) + '" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '" ' + extra + '/>';
+  }
+
+  function nodeFill(m, view, groupList) {
+    var f = view.nodeFill || 'putih';
+    if (f === 'gender') return GENDER_FILL[m.gender] || GENDER_FILL[''];
+    if (f === 'kategori') return CAT_FILL[m.cat];
+    if (f === 'grup') {
+      var i = groupList.indexOf(m.group || '');
+      return GROUP_FILL[(i < 0 ? 0 : i) % GROUP_FILL.length];
+    }
+    return '#ffffff';
+  }
+
+  function renderSVG(an, layout, view, opts) {
+    opts = opts || {};
+    var W = layout.W, H = layout.H, pos = layout.pos;
+    var focus = opts.focus != null ? opts.focus : null;
+    var title = opts.title || '';
+    var geoms = an.members.map(function (m) { return nodeGeom(m, view); });
+    var lines = buildLines(an, view);
+    var groupList = Array.from(new Set(an.members.map(function (m) { return m.group || ''; }))).sort();
+    var out = [];
+    out.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" font-family="' + FONT + '">');
+    var colors = new Set(lines.map(function (l) { return l.color; }));
+    out.push('<defs>');
+    colors.forEach(function (c) {
+      out.push('<marker id="ar' + c.slice(1) + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="' + c + '"/></marker>');
+    });
+    out.push('</defs>');
+    out.push('<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>');
+    if (title) out.push('<text x="22" y="30" font-size="16" font-weight="700" fill="#1b2130">' + esc(title) + '</text>');
+    if (opts.subtitle) out.push('<text x="22" y="48" font-size="11.5" fill="#5d6678">' + esc(opts.subtitle) + '</text>');
+
+    if (layout.model === 'target') {
+      for (var k = layout.radii.length - 1; k >= 0; k--) {
+        out.push('<circle cx="' + layout.cx + '" cy="' + layout.cy + '" r="' + layout.radii[k].toFixed(1) + '" fill="' + (k === 0 ? '#f7f9fc' : 'none') + '" stroke="#8b93a1" stroke-width="1"/>');
+      }
+    }
+
+    // garis
+    var pairCount = new Map(), pairIdx = new Map();
+    lines.forEach(function (l) {
+      var key = Math.min(l.a, l.b) + '|' + Math.max(l.a, l.b);
+      pairCount.set(key, (pairCount.get(key) || 0) + 1);
+    });
+    lines.forEach(function (l) {
+      var key = Math.min(l.a, l.b) + '|' + Math.max(l.a, l.b);
+      var idx = pairIdx.get(key) || 0; pairIdx.set(key, idx + 1);
+      var n = pairCount.get(key);
+      var u = Math.min(l.a, l.b), v = Math.max(l.a, l.b);
+      var cdx = pos[v].x - pos[u].x, cdy = pos[v].y - pos[u].y, cl = Math.hypot(cdx, cdy) || 1;
+      var px = -cdy / cl, py = cdx / cl;
+      var off = (idx - (n - 1) / 2) * 3.4;
+      var dx = pos[l.b].x - pos[l.a].x, dy = pos[l.b].y - pos[l.a].y, L = Math.hypot(dx, dy) || 1;
+      var d1 = boundaryDist(geoms[l.a], dx, dy) + 1.5, d2 = boundaryDist(geoms[l.b], -dx, -dy) + 1.5;
+      if (L <= d1 + d2 + 4) return;
+      var x1 = pos[l.a].x + dx / L * d1 + px * off, y1 = pos[l.a].y + dy / L * d1 + py * off;
+      var x2 = pos[l.b].x - dx / L * d2 + px * off, y2 = pos[l.b].y - dy / L * d2 + py * off;
+      var dim = focus != null && l.a !== focus && l.b !== focus;
+      var mk = 'url(#ar' + l.color.slice(1) + ')';
+      out.push('<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + l.color + '" stroke-width="' + l.width + '"' +
+        (l.dash ? ' stroke-dasharray="' + l.dash + '"' : '') + ' stroke-linecap="' + (l.type === 'neg' ? 'round' : 'butt') + '" marker-end="' + mk + '"' + (l.both ? ' marker-start="' + mk + '"' : '') +
+        (dim ? ' opacity="0.08"' : ' opacity="0.92"') + '/>');
+    });
+
+    // simpul
+    var neigh = null;
+    if (focus != null) {
+      neigh = new Set([focus]);
+      an.actEdges.forEach(function (e) { if (e.from === focus) neigh.add(e.to); if (e.to === focus) neigh.add(e.from); });
+    }
+    an.members.forEach(function (m, i) {
+      var p = pos[i], g = geoms[i];
+      var dim = neigh && !neigh.has(i);
+      var sel = focus === i;
+      out.push('<g data-node="' + i + '" style="cursor:grab;touch-action:none" opacity="' + (dim ? 0.3 : 1) + '">');
+      out.push(shapeSVG(g, p.x, p.y, nodeFill(m, view, groupList), sel ? '#000' : '#2b2f38', sel ? 2.4 : 1.2));
+      var label = view.label === 'nama' ? m.name : String(m.no);
+      var fs = view.label === 'nama' ? 11 : 11;
+      out.push('<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" dy="0.35em" text-anchor="middle" font-size="' + fs + '" fill="#1b2130" font-weight="' + (view.label === 'nama' ? 600 : 500) + '" style="pointer-events:none">' + esc(label) + '</text>');
+      if (view.label === 'nomor+nama') {
+        var ty = (p.y + g.hh + 11).toFixed(1), tx = p.x.toFixed(1);
+        out.push('<text x="' + tx + '" y="' + ty + '" text-anchor="middle" font-size="10" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linejoin="round" style="pointer-events:none">' + esc(m.name) + '</text>');
+        out.push('<text x="' + tx + '" y="' + ty + '" text-anchor="middle" font-size="10" fill="#1b2130" style="pointer-events:none">' + esc(m.name) + '</text>');
+      }
+      out.push('</g>');
+    });
+
+    // legenda
+    var rows = [];
+    var hasG = function (g) { return an.members.some(function (m) { return m.gender === g; }); };
+    if (hasG('L')) rows.push({ t: 'shape', g: { kind: 'ellipse', hw: 7, hh: 7 }, label: 'Laki-laki' });
+    if (hasG('P')) rows.push({ t: 'shape', g: { kind: 'rect', hw: 7, hh: 7, rx: 1 }, label: 'Perempuan' });
+    if (hasG('')) rows.push({ t: 'shape', g: { kind: 'diamond', hw: 8, hh: 8 }, label: 'Tidak dicatat' });
+    var shown = new Set(lines.map(function (l) { return l.type === 'neg' ? 'neg' : 'pos'; }));
+    var posLines = lines.filter(function (l) { return l.type !== 'neg'; });
+    if (view.colorBy === 'rank') {
+      var rk = Array.from(new Set(posLines.map(function (l) { return l.rank; }))).sort();
+      rk.forEach(function (r) { rows.push({ t: 'line', color: RANK_COLOR[r] || RANK_COLOR[3], dash: view.dashBy === 'rank' ? (r === 1 ? '' : r === 2 ? '7 4' : '9 3 2 3') : '', label: 'Pilihan ' + r, both: false }); });
+    } else if (view.colorBy === 'criterion') {
+      an.crits.forEach(function (c) {
+        if (c.type !== 'pos') return;
+        var ci = an.project.criteria.indexOf(c);
+        rows.push({ t: 'line', color: CRIT_COLOR[ci % CRIT_COLOR.length], dash: '', label: c.name, both: false });
+      });
+    } else {
+      rows.push({ t: 'line', color: MUTUAL_COLOR, dash: '', label: 'Timbal balik', both: true });
+      rows.push({ t: 'line', color: ONEWAY_COLOR, dash: view.dashBy === 'mutual' ? '6 4' : '', label: 'Satu arah', both: false });
+    }
+    if (view.dashBy === 'mutual' && view.colorBy !== 'mutual') {
+      rows.push({ t: 'line', color: '#555', dash: '', label: 'Utuh = timbal balik', both: false, plain: true });
+      rows.push({ t: 'line', color: '#555', dash: '6 4', label: 'Putus = satu arah', both: false, plain: true });
+    }
+    if (view.colorBy !== 'criterion' && an.crits.length) {
+      rows.push({ t: 'head', label: 'Kriteria' });
+      an.crits.forEach(function (c) { rows.push({ t: 'text', label: c.name + (c.type === 'neg' ? ' (menolak)' : '') }); });
+    }
+    if (shown.has('neg')) rows.push({ t: 'line', color: NEG_COLOR, dash: '1.5 4', label: 'Penolakan', both: false });
+    if (view.nodeFill === 'grup') {
+      rows.push({ t: 'head', label: 'Grup' });
+      groupList.slice(0, 8).forEach(function (g, i) { rows.push({ t: 'swatch', fill: GROUP_FILL[i % GROUP_FILL.length], label: g || '(tanpa grup)' }); });
+    }
+    if (view.nodeFill === 'kategori' && layout.model !== 'target') {
+      rows.push({ t: 'head', label: 'Kategori status' });
+      CATS.forEach(function (k) { rows.push({ t: 'swatch', fill: CAT_FILL[k], label: CAT_LABEL[k] + ' (' + an.summary.counts[k] + ')' }); });
+    }
+    if (layout.model === 'target') {
+      rows.push({ t: 'head', label: 'Cincin (dari pusat)' });
+      CATS.forEach(function (k, i) { rows.push({ t: 'ring', fill: view.nodeFill === 'kategori' ? CAT_FILL[k] : 'none', label: CAT_LABEL[k] + ' (' + layout.counts[i] + ')' }); });
+    }
+    var lx = W - 228, ly = 52, rowH = 22, lh = rows.length * rowH + 14;
+    out.push('<rect x="' + lx + '" y="12" width="216" height="30" rx="3" fill="none" stroke="#b3261e" stroke-width="1.8"/>');
+    out.push('<text x="' + (lx + 108) + '" y="33" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="5" fill="#b3261e">RAHASIA</text>');
+    out.push('<rect x="' + lx + '" y="' + ly + '" width="216" height="' + lh + '" fill="#fff" stroke="#c4c9d2" rx="3"/>');
+    rows.forEach(function (r, i) {
+      var y = ly + 18 + i * rowH;
+      if (r.t === 'shape') {
+        out.push(shapeSVG(r.g, lx + 22, y - 4, '#fff', '#2b2f38', 1.1));
+        out.push('<text x="' + (lx + 42) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label) + '</text>');
+      } else if (r.t === 'line') {
+        var mid = 'url(#ar' + r.color.slice(1) + ')';
+        if (!r.plain) {
+          out.push('<line x1="' + (lx + 10) + '" y1="' + (y - 4) + '" x2="' + (lx + 36) + '" y2="' + (y - 4) + '" stroke="' + r.color + '" stroke-width="1.8"' + (r.dash ? ' stroke-dasharray="' + r.dash + '"' : '') + ' marker-end="' + mid + '"' + (r.both ? ' marker-start="' + mid + '"' : '') + '/>');
+        } else {
+          out.push('<line x1="' + (lx + 10) + '" y1="' + (y - 4) + '" x2="' + (lx + 36) + '" y2="' + (y - 4) + '" stroke="' + r.color + '" stroke-width="1.8"' + (r.dash ? ' stroke-dasharray="' + r.dash + '"' : '') + '/>');
+        }
+        out.push('<text x="' + (lx + 44) + '" y="' + y + '" font-size="11.5" fill="' + (r.color.length && !r.plain ? r.color : '#1b2130') + '">' + esc(r.label.length > 26 ? r.label.slice(0, 25) + '…' : r.label) + '</text>');
+      } else if (r.t === 'swatch') {
+        out.push('<rect x="' + (lx + 15) + '" y="' + (y - 10) + '" width="14" height="12" rx="3" fill="' + r.fill + '" stroke="#2b2f38" stroke-width="0.9"/>');
+        out.push('<text x="' + (lx + 42) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label.length > 24 ? r.label.slice(0, 23) + '…' : r.label) + '</text>');
+      } else if (r.t === 'text') {
+        out.push('<text x="' + (lx + 12) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label.length > 30 ? r.label.slice(0, 29) + '…' : r.label) + '</text>');
+      } else if (r.t === 'head') {
+        out.push('<text x="' + (lx + 12) + '" y="' + y + '" font-size="10.5" font-weight="700" fill="#5d6678" letter-spacing="0.4">' + esc(r.label.toUpperCase()) + '</text>');
+      } else if (r.t === 'ring') {
+        out.push('<circle cx="' + (lx + 22) + '" cy="' + (y - 4) + '" r="6" fill="' + (r.fill || 'none') + '" stroke="#8b93a1"/>');
+        out.push('<text x="' + (lx + 42) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label) + '</text>');
+      }
+    });
+    var owner = String(opts.owner || '').trim();
+    var oname = owner || '(belum diisi)';
+    if (oname.length > 38) oname = oname.slice(0, 37) + '…';
+    var by = H - 50;
+    out.push('<text x="22" y="' + by + '" font-size="10" fill="#6b7383">Penanggung jawab</text>');
+    out.push('<text x="22" y="' + (by + 14) + '" font-size="12.5" font-weight="700" fill="' + (owner ? '#1b2130' : '#b3261e') + '">' + esc(oname) + '</text>');
+    out.push('<text x="22" y="' + (by + 30) + '" font-size="10" fill="#6b7383">Pengembang aplikasi</text>');
+    out.push('<text x="22" y="' + (by + 43) + '" font-size="11" font-weight="600" fill="#1b2130">Hammad Zahid Muharram, M.Psi., Psikolog</text>');
+    out.push('</svg>');
+    return out.join('');
+  }
+
+  /* ---------- narasi ---------- */
+  var CONTEXT = {
+    kelas: { label: 'Kelas atau pelatihan', unit: 'peserta didik', unitCap: 'Peserta didik', groupLabel: 'Kelas/rombel', place: 'kelas', community: false },
+    informal: { label: 'Kelompok pertemanan', unit: 'anggota', unitCap: 'Anggota', groupLabel: 'Sub-kelompok', place: 'kelompok pertemanan', community: true },
+    organisasi: { label: 'Organisasi (kerja atau kampus)', unit: 'anggota', unitCap: 'Anggota', groupLabel: 'Divisi/unit', place: 'organisasi', community: false },
+    ormas: { label: 'Organisasi masyarakat (Karang Taruna, PKK, kelompok tani, kader)', unit: 'anggota', unitCap: 'Anggota', groupLabel: 'Seksi/RT', place: 'organisasi masyarakat', community: true },
+    warga: { label: 'Warga satu lingkungan (RT, RW, dusun)', unit: 'warga', unitCap: 'Warga', groupLabel: 'RT/RW/dusun', place: 'lingkungan warga', community: true },
+    dampingan: { label: 'Kelompok dampingan atau layanan (sebaya, dukungan, binaan)', unit: 'anggota', unitCap: 'Anggota', groupLabel: 'Kelompok/sesi', place: 'kelompok dampingan', community: true }
+  };
+  var pct = function (x) { return (x * 100).toFixed(0) + '%'; };
+  var pct1 = function (x) { return (x * 100).toFixed(1).replace('.', ',') + '%'; };
+  var list = function (arr, max) {
+    max = max || 6;
+    var a = arr.slice(0, max).map(function (m) { return m.name + ' (' + m.no + ')'; });
+    if (arr.length > max) a.push('dan ' + (arr.length - max) + ' lainnya');
+    return a.join(', ');
+  };
+
+  function narrative(an, context) {
+    var cx = CONTEXT[context] || CONTEXT.kelas, S = an.summary, out = [];
+    if (!S.nPos) return ['Belum ada pilihan positif yang terbaca pada kriteria aktif, sehingga analisis belum dapat disusun.'];
+    var by = function (k) { return an.members.filter(function (m) { return m.cat === k; }); };
+    var stars = by('bintang'), iso = by('isolat'), abai = by('abai');
+    out.push('Pada ' + cx.place + ' ini terdapat ' + S.N + ' ' + cx.unit + ' dengan ' + S.nPos + ' pilihan positif terbaca. Rata-rata tiap ' + cx.unit.split(' ')[0] + ' menerima ' + S.avgReceived.toFixed(1) + ' pilihan (skor terbobot rata-rata ' + S.mean.toFixed(1) + ', SD ' + S.sd.toFixed(1) + ').');
+    if (stars.length) out.push('Kategori populer (skor ≥ ' + S.zHigh + ' SD di atas rata-rata) ada ' + stars.length + ': ' + list(stars) + '. Kelompok ini menerima ' + pct(S.starShare) + ' dari seluruh pilihan, sehingga posisinya berpengaruh terhadap dinamika ' + cx.place + '.');
+    else out.push('Tidak ada ' + cx.unit + ' yang melampaui batas populer, artinya pilihan relatif tersebar tanpa figur yang menonjol.');
+    if (iso.length) out.push('Ada ' + iso.length + ' isolat (tidak dipilih siapa pun pada kriteria aktif): ' + list(iso) + '. Skor nol menggambarkan posisi dalam peta pilihan, belum tentu menunjukkan kesulitan sosial (bisa juga anggota baru, jarang hadir, atau berada di lingkaran lain di luar kelompok ini); perlu dikonfirmasi lewat observasi dan wawancara.');
+    else out.push('Tidak ada isolat pada kriteria aktif; setiap ' + cx.unit.split(' ')[0] + ' setidaknya dipilih satu orang.');
+    if (abai.length) out.push('Kategori terabaikan (skor ≤ ' + S.zLow + ' SD dari rata-rata namun tidak nol) mencakup ' + list(abai) + '.');
+    out.push('Terdapat ' + S.mutualPairs + ' pasangan timbal balik (indeks kohesi ' + pct1(S.cohesion) + ' dari seluruh pasangan yang mungkin, nilai kecil wajar karena tiap orang hanya memilih beberapa nama; ' + pct(S.reciprocity) + ' pilihan berbalas). ' +
+      (an.cliques.length ? 'Pasangan tersebut membentuk ' + an.cliques.length + ' rangkaian timbal balik; yang terbesar beranggotakan ' + an.cliques[0].length + ' orang (' + an.cliques[0].map(function (i) { return an.members[i].name; }).slice(0, 6).join(', ') + (an.cliques[0].length > 6 ? ', …' : '') + ').' : 'Belum terbentuk rangkaian timbal balik.'));
+    if (S.gender && S.gender.expected != null) {
+      var d = S.gender.observed - S.gender.expected;
+      out.push('Sebanyak ' + pct(S.gender.observed) + ' pilihan ditujukan ke sesama jenis kelamin, dibanding ' + pct(S.gender.expected) + ' yang diharapkan bila memilih acak. ' + (d > 0.1 ? 'Kecenderungan memilih sesama jenis kelamin cukup kuat.' : d < -0.1 ? 'Pilihan lintas jenis kelamin lebih banyak dari perkiraan acak.' : 'Selisihnya kecil sehingga tidak tampak segregasi yang nyata.'));
+    }
+    if (S.group && S.group.expected != null) {
+      var dg = S.group.observed - S.group.expected;
+      out.push('Menurut pengelompokan ' + cx.groupLabel + ', ' + pct(S.group.observed) + ' pilihan jatuh di dalam kelompok yang sama (acak ≈ ' + pct(S.group.expected) + '). ' + (dg > 0.1 ? 'Ikatan dalam kelompok lebih kuat daripada antar kelompok.' : 'Belum tampak sekat antar kelompok yang tegas.'));
+    }
+    if (an.coie) {
+      var cnt = {};
+      an.coie.forEach(function (c) { cnt[c.type] = (cnt[c.type] || 0) + 1; });
+      out.push('Klasifikasi sosiometrik (Coie dkk.): ' + Object.keys(cnt).map(function (k) { return cnt[k] + ' ' + k.toLowerCase(); }).join(', ') + '.');
+    }
+    var tips = {
+      kelas: 'Untuk pembentukan kelompok belajar, pertimbangkan menempatkan isolat bersama anggota yang memilih mereka atau bersama anggota populer yang suportif.',
+      informal: 'Perhatikan agar kegiatan bersama memberi ruang bagi anggota yang berada di pinggir jaringan, dan cermati apakah ada sub-kelompok yang berjalan sendiri-sendiri.',
+      organisasi: 'Untuk penugasan, pertimbangkan anggota populer sebagai penghubung informasi dan pastikan anggota di pinggir jaringan mendapat pendampingan atau peran yang menghubungkan mereka.',
+      ormas: 'Untuk perencanaan program, anggota populer dapat dipertimbangkan sebagai penghubung informasi dan penggerak kegiatan, tetapi hindari membebani mereka sendirian. Anggota di pinggir jaringan dapat dilibatkan lewat peran yang jelas atau digandeng anggota yang memilih mereka. Cermati pula apakah pilihan menumpuk pada satu seksi atau RT.',
+      warga: 'Tokoh yang banyak dipilih dapat menjadi mitra utama untuk menyebarkan informasi dan menggerakkan warga. Warga yang tidak dipilih siapa pun kemungkinan sulit terjangkau kegiatan umum sehingga perlu pendekatan langsung, misalnya kunjungan atau melalui kader. Cermati juga sekat antar-RT atau antar-dusun bila terlihat pada pola pilihan.',
+      dampingan: 'Anggota yang terisolasi atau terabaikan perlu diperhatikan dalam pengaturan sesi, misalnya lewat pemasangan sebaya atau tindak lanjut individual. Pasangan timbal balik dan rangkaian yang rapat dapat dimanfaatkan sebagai sumber dukungan sebaya.'
+    };
+    out.push(tips[context] || tips.kelas);
+    var caveat = 'Catatan: sosiometri menggambarkan pilihan pada satu waktu dan kriteria tertentu. Gunakan sebagai bahan awal yang dilengkapi observasi dan wawancara, bukan sebagai penilaian akhir.';
+    if (cx.community) caveat += ' Di komunitas, pilihan dapat dipengaruhi hubungan kekerabatan, senioritas, dan norma kesantunan, sehingga temuan perlu dikonfirmasi lewat wawancara atau diskusi kelompok.';
+    out.push(caveat);
+    out.push('Pilihan dan penolakan bersifat sensitif. Gunakan label nomor pada gambar yang dibagikan kepada anggota atau pihak lain, dan simpan datanya dengan aman.');
+    return out;
+  }
+
+  return {
+    CATS: CATS, CAT_LABEL: CAT_LABEL, CAT_FILL: CAT_FILL, RANK_COLOR: RANK_COLOR, CRIT_COLOR: CRIT_COLOR,
+    MUTUAL_COLOR: MUTUAL_COLOR, ONEWAY_COLOR: ONEWAY_COLOR, NEG_COLOR: NEG_COLOR, CONTEXT: CONTEXT, CANVAS: CANVAS,
+    mulberry32: mulberry32, norm: norm, esc: esc, mean: mean, sd: sd,
+    buildEdges: buildEdges, resolveRef: resolveRef, buildIndex: buildIndex, analyze: analyze,
+    nodeGeom: nodeGeom, boundaryDist: boundaryDist, computeLayout: computeLayout, layoutTarget: layoutTarget, layoutNetwork: layoutNetwork,
+    buildLines: buildLines, renderSVG: renderSVG, narrative: narrative, pct: pct
+  };
+});
+/* Data contoh (digenerate secara acak dengan benih tetap). Bukan data sungguhan. */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.SocioSample = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+  var NAMES = [
+    ['Aisyah', 'P'], ['Bagas', 'L'], ['Citra', 'P'], ['Dimas', 'L'], ['Eka', 'P'], ['Farhan', 'L'],
+    ['Gita', 'P'], ['Hafiz', 'L'], ['Intan', 'P'], ['Jihan', 'P'], ['Kevin', 'L'], ['Laras', 'P'],
+    ['Miftah', 'L'], ['Nadia', 'P'], ['Oki', 'L'], ['Putri', 'P'], ['Rizky', 'L'], ['Salsa', 'P'],
+    ['Tama', 'L'], ['Umar', 'L'], ['Vina', 'P'], ['Wahyu', 'L'], ['Yusuf', 'L'], ['Zahra', 'P'],
+    ['Alya', 'P'], ['Bima', 'L'], ['Dewi', 'P'], ['Fikri', 'L'], ['Galih', 'L'], ['Hana', 'P'],
+    ['Indra', 'L'], ['Jasmine', 'P'], ['Lukman', 'L'], ['Mira', 'P'], ['Naufal', 'L'], ['Ovi', 'P']
+  ];
+  function rng(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function gauss(r) { return Math.sqrt(-2 * Math.log(r() + 1e-9)) * Math.cos(2 * Math.PI * r()); }
+
+  function make(kind, seed) {
+    var r = rng(seed || 20260929);
+    var n = kind === 'multi' ? 22 : 30;
+    // pilih nama secara berselang agar komposisi jenis kelamin seimbang
+    var mem = NAMES.slice(0, n).map(function (x) { return { name: x[0], gender: x[1], group: '' }; });
+    var groupNames = kind === 'multi' ? ['RT 01', 'RT 02', 'RT 03'] : ['A', 'B', 'C'];
+    var cluster = mem.map(function (_, i) { return i % groupNames.length; });
+    // acak pemetaan kluster
+    for (var i = n - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = cluster[i]; cluster[i] = cluster[j]; cluster[j] = t; }
+    if (kind === 'multi') mem.forEach(function (m, i) { m.group = groupNames[cluster[i]]; });
+
+    var criteria;
+    if (kind === 'multi') {
+      criteria = [
+        { id: 'c1', name: 'Paling dekat', question: 'Tulis 1 nama anggota yang paling dekat denganmu.', type: 'pos', picks: 1, weights: [1] },
+        { id: 'c2', name: 'Diajak menggerakkan kegiatan', question: 'Tulis 1 nama yang paling enak diajak bekerja sama menggerakkan kegiatan warga, misalnya kerja bakti atau peringatan hari besar.', type: 'pos', picks: 1, weights: [1] },
+        { id: 'c3', name: 'Tempat meminta pendapat', question: 'Tulis 1 nama yang akan kamu cari untuk meminta pendapat atau bantuan ketika ada masalah.', type: 'pos', picks: 1, weights: [1] }
+      ];
+    } else {
+      criteria = [
+        { id: 'c1', name: 'Teman paling dekat', question: 'Tulis 2 nama yang paling dekat denganmu di kelompok ini, urutkan dari yang paling dekat.', type: 'pos', picks: 2, weights: [2, 1] }
+      ];
+    }
+
+    var base = mem.map(function () { return Math.exp(gauss(r) * 0.42); });
+    // beberapa isolat sungguhan
+    var isoN = kind === 'multi' ? 1 : 2;
+    var order = mem.map(function (_, i) { return i; }).sort(function () { return r() - 0.5; });
+    var iso = order.slice(0, isoN);
+    iso.forEach(function (i) { base[i] = 0; });
+    var rej = mem.map(function () { return 0.15; });
+    order.slice(isoN, isoN + 3).forEach(function (i) { rej[i] = 4; });
+
+    var choices = mem.map(function () { return {}; });
+    criteria.forEach(function (c, ci) {
+      var appeal = base.map(function (b, i) { return iso.indexOf(i) >= 0 ? 0 : b * Math.exp(gauss(r) * 0.3); });
+      mem.forEach(function (m, i) {
+        var picked = [];
+        for (var k = 0; k < c.picks; k++) {
+          var w = mem.map(function (o, j) {
+            if (j === i || picked.indexOf(j) >= 0) return 0;
+            var base0 = c.type === 'neg' ? rej[j] : appeal[j];
+            var h = o.gender === m.gender ? 1.9 : 1;
+            var cl = cluster[j] === cluster[i] ? 2.2 : 1;
+            if (c.type === 'neg') { h = 1; cl = cluster[j] === cluster[i] ? 0.6 : 1; }
+            if (c.type === 'pos' && picked.length === 0 && ci === 0 && k === 1) cl *= 1;
+            return base0 * h * cl;
+          });
+          var tot = w.reduce(function (a, b) { return a + b; }, 0);
+          if (tot <= 0) break;
+          var x = r() * tot, acc = 0, pick = 0;
+          for (var q = 0; q < w.length; q++) { acc += w[q]; if (x <= acc) { pick = q; break; } }
+          picked.push(pick);
+        }
+        // sebagian pilihan dibalas agar terbentuk pasangan timbal balik
+        choices[i][c.id] = picked.map(function (p) { return mem[p].name; });
+      });
+    });
+    // balas sebagian pilihan pertama pada kriteria pertama
+    var c0 = criteria[0];
+    mem.forEach(function (m, i) {
+      var pick = choices[i][c0.id][0];
+      if (pick == null) return;
+      var j = mem.findIndex(function (x) { return x.name === pick; });
+      if (j < 0 || iso.indexOf(i) >= 0 || r() > 0.42) return;
+      var arr = choices[j][c0.id];
+      if (arr.indexOf(m.name) >= 0) return;
+      arr[0] = m.name;
+      // hindari duplikat di pilihan kedua
+      if (arr.length > 1 && arr[1] === m.name) arr.length = 1;
+    });
+    // pastikan hanya isolat yang disengaja yang tidak dipilih siapa pun pada kriteria pertama
+    var isoNames = iso.map(function (k) { return mem[k].name; });
+    for (var pass = 0; pass < 3; pass++) {
+      var got = {};
+      mem.forEach(function (m, i) { (choices[i][c0.id] || []).forEach(function (nm) { got[nm] = (got[nm] || 0) + 1; }); });
+      mem.forEach(function (m, ti) {
+        if (got[m.name] || iso.indexOf(ti) >= 0) return;
+        for (var tries = 0; tries < 40; tries++) {
+          var d = Math.floor(r() * n);
+          if (d === ti || iso.indexOf(d) >= 0) continue;
+          var arr = choices[d][c0.id];
+          if (!arr || !arr.length || arr.indexOf(m.name) >= 0) continue;
+          var last = arr.length - 1;
+          var lostName = arr[last];
+          if ((got[lostName] || 0) <= 1) continue;
+          got[lostName]--; arr[last] = m.name; got[m.name] = 1;
+          break;
+        }
+      });
+    }
+    // isolat tidak boleh dipilih setelah pembalasan
+    criteria.forEach(function (c) {
+      if (c.type === 'neg') return;
+      mem.forEach(function (m, i) {
+        choices[i][c.id] = (choices[i][c.id] || []).filter(function (nm) { return iso.map(function (k) { return mem[k].name; }).indexOf(nm) < 0; });
+      });
+    });
+    return {
+      meta: { title: kind === 'multi' ? 'Karang Taruna RW 05' : 'Kelompok Pertemanan Warga RW 05', context: kind === 'multi' ? 'ormas' : 'informal' },
+      criteria: criteria, members: mem, choices: choices
+    };
+  }
+  return { make: make };
+});
+/* Sosiogram - antarmuka */
+(function () {
+  'use strict';
+  var S = window.Socio, SMP = window.SocioSample;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var esc = S.esc, clamp = function (x, a, b) { return Math.max(a, Math.min(b, x)); };
+  var LS_KEY = 'peta-sosiometri-v1';
+
+  var P, V, cache = { sig: null, an: null, layout: null }, focus = null, dirty = true, tab = 'sosiogram', sortMode = 'skor', matrixCrit = 'all';
+
+  /* ---------- keadaan ---------- */
+  function defaultView(model) {
+    return model === 'network'
+      ? { model: 'network', colorBy: 'mutual', dashBy: 'none', mergeMutual: true, widthByRank: false, showNeg: true, label: 'nama', nodeFill: 'gender', groupBy: 'gender' }
+      : { model: 'target', colorBy: 'rank', dashBy: 'none', mergeMutual: false, widthByRank: true, showNeg: true, label: 'nomor', nodeFill: 'putih', groupBy: 'none' };
+  }
+  function defWeights(k, type) { if (type === 'neg') return new Array(k).fill(1); return k === 1 ? [1] : k === 2 ? [2, 1] : [3, 2, 1]; }
+  function uid() { var n = 1; while (P.criteria.some(function (c) { return c.id === 'c' + n; })) n++; return 'c' + n; }
+  function critColor(c) { return S.CRIT_COLOR[Math.max(0, P.criteria.indexOf(c)) % S.CRIT_COLOR.length]; }
+  function ctx() { return S.CONTEXT[P.meta.context] || S.CONTEXT.kelas; }
+
+  function normalize() {
+    P.meta = Object.assign({ title: '', owner: '', context: 'kelas', sample: false }, P.meta || {});
+    P.criteria = (P.criteria || []).slice(0, 4).map(function (c, i) {
+      var picks = clamp(parseInt(c.picks, 10) || 1, 1, 3);
+      var type = c.type === 'neg' ? 'neg' : 'pos';
+      var w = (c.weights || []).slice(0, picks).map(function (x) { return isFinite(+x) ? +x : 1; });
+      while (w.length < picks) w.push(defWeights(picks, type)[w.length]);
+      return { id: c.id || ('c' + (i + 1)), name: c.name || ('Kriteria ' + (i + 1)), question: c.question || '', type: type, picks: picks, weights: w };
+    });
+    P.members = (P.members || []).map(function (m) { return { name: m.name || '', gender: (m.gender === 'L' || m.gender === 'P') ? m.gender : '', group: m.group || '' }; });
+    P.choices = P.members.map(function (_, i) {
+      var o = (P.choices && P.choices[i]) || {}, r = {};
+      P.criteria.forEach(function (c) { r[c.id] = (o[c.id] || []).slice(0, c.picks).map(function (x) { return x == null ? '' : String(x); }); });
+      return r;
+    });
+    V.active = (V.active || []).filter(function (id) { return P.criteria.some(function (c) { return c.id === id; }); });
+    if (!V.active.length) V.active = P.criteria.map(function (c) { return c.id; });
+  }
+
+  function persist() {
+    clearTimeout(persist.t);
+    persist.t = setTimeout(function () {
+      try { localStorage.setItem(LS_KEY, JSON.stringify({ P: P, V: V })); } catch (e) { /* abaikan */ }
+    }, 400);
+  }
+  function touch(opts) {
+    dirty = true;
+    if (!opts || !opts.keepSample) P.meta.sample = false;
+    $('#banner').hidden = !P.meta.sample;
+    updateHeaderLine();
+    persist();
+  }
+  function updateHeaderLine() {
+    var n = P.members.length, c = ctx();
+    var t = P.meta.title ? P.meta.title + ' · ' : '';
+    $('#ctxLine').textContent = t + n + ' anggota · konteks ' + c.place + ' · ' + P.criteria.length + ' kriteria';
+  }
+
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg; t.classList.add('on');
+    clearTimeout(toast.t);
+    toast.t = setTimeout(function () { t.classList.remove('on'); }, 3600);
+  }
+
+  /* ---------- analisis + tata letak ---------- */
+  function ensure() {
+    if (!dirty && cache.an) return cache;
+    normalizeLight();
+    var an = S.analyze(P, V.active, { zHigh: V.zHigh, zLow: V.zLow });
+    var sig = JSON.stringify([V.model, V.label, V.groupBy, V.seed, P.members.map(function (m) { return [m.name, m.gender, m.group]; }),
+      an.posEdges.map(function (e) { return [e.from, e.to]; }), an.members.map(function (m) { return m.cat; })]);
+    if (sig !== cache.sig || !cache.layout) {
+      cache.layout = an.N >= 2 ? S.computeLayout(an, V, V.seed) : null;
+      cache.sig = sig;
+    }
+    cache.an = an; dirty = false;
+    return cache;
+  }
+  function normalizeLight() {
+    while (P.choices.length < P.members.length) P.choices.push({});
+    P.choices.length = P.members.length;
+    P.choices.forEach(function (o) { P.criteria.forEach(function (c) { if (!o[c.id]) o[c.id] = []; }); });
+  }
+
+  function updateOwnerHint() {
+    var el = $('#ownerHint'); if (el) el.hidden = !!(P.meta.owner || '').trim();
+  }
+
+  /* ---------- tab ---------- */
+  function show(t) {
+    tab = t;
+    $$('.panel').forEach(function (p) { p.hidden = p.id !== 'p-' + t; });
+    $$('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false'); });
+    if (t === 'instrumen') renderInstrumen();
+    if (t === 'data') renderDataTable();
+    if (t === 'sosiogram') { renderControls(); scheduleStage(); updateOwnerHint(); }
+    if (t === 'hasil') renderResults();
+  }
+
+  /* ---------- Instrumen ---------- */
+  function critCard(c, i) {
+    var w = '';
+    if (c.type === 'pos') {
+      w = '<div class="f"><span style="font-size:12px;font-weight:600;color:var(--muted)">Bobot tiap peringkat</span><div class="wts">';
+      for (var k = 0; k < c.picks; k++) w += '<b>P' + (k + 1) + '</b><input type="number" step="0.5" min="0" data-cw="' + k + '" value="' + c.weights[k] + '" aria-label="Bobot pilihan ' + (k + 1) + '">';
+      w += '</div></div>';
+    }
+    return '<div class="crit" data-ci="' + i + '"><div class="crit-head"><span class="dot" style="background:' + critColor(c) + '"></span>' +
+      '<input type="text" data-cf="name" value="' + esc(c.name) + '" aria-label="Nama kriteria"><button class="icon" type="button" data-act="delCrit" aria-label="Hapus kriteria">×</button></div>' +
+      '<div class="crit-grid"><label class="f">Jenis<select data-cf="type"><option value="pos"' + (c.type === 'pos' ? ' selected' : '') + '>Positif (memilih)</option><option value="neg"' + (c.type === 'neg' ? ' selected' : '') + '>Negatif (menolak)</option></select></label>' +
+      '<label class="f">Jumlah pilihan<select data-cf="picks">' + [1, 2, 3].map(function (n) { return '<option' + (c.picks === n ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label>' + w + '</div>' +
+      '<label class="f">Pertanyaan untuk responden (opsional)<textarea rows="2" data-cf="question">' + esc(c.question) + '</textarea></label></div>';
+  }
+  function renderInstrumen() {
+    $('#title').value = P.meta.title; $('#owner').value = P.meta.owner || ''; $('#context').value = P.meta.context;
+    $('#zHigh').value = V.zHigh; $('#zLow').value = V.zLow;
+    $('#critList').innerHTML = P.criteria.map(critCard).join('') || '<p class="muted">Belum ada kriteria. Pilih salah satu contoh di atas atau tambahkan sendiri.</p>';
+    $('#addCrit').disabled = P.criteria.length >= 4;
+  }
+  var PRESETS = {
+    satu: [{ id: 'c1', name: 'Teman paling dekat', question: 'Tulis 2 nama yang paling dekat denganmu di kelompok ini, urutkan dari yang paling dekat.', type: 'pos', picks: 2, weights: [2, 1] }],
+    tiga: [
+      { id: 'c1', name: 'Paling dekat', question: 'Tulis 1 nama yang paling dekat denganmu.', type: 'pos', picks: 1, weights: [1] },
+      { id: 'c2', name: 'Diajak kerja sama', question: 'Tulis 1 nama yang paling enak diajak bekerja sama dalam kegiatan bersama.', type: 'pos', picks: 1, weights: [1] },
+      { id: 'c3', name: 'Tempat bertanya', question: 'Tulis 1 nama yang akan kamu cari ketika bingung atau ingin menyampaikan usulan dan butuh tempat bercerita lebih dulu.', type: 'pos', picks: 1, weights: [1] }
+    ],
+    komunitas: [
+      { id: 'c1', name: 'Tempat meminta bantuan', question: 'Kalau sedang butuh bantuan, siapa 2 orang yang akan kamu datangi? Urutkan dari yang pertama.', type: 'pos', picks: 2, weights: [2, 1] },
+      { id: 'c2', name: 'Dipercaya memimpin kegiatan', question: 'Siapa 1 orang yang paling kamu percaya untuk memimpin kegiatan bersama?', type: 'pos', picks: 1, weights: [1] },
+      { id: 'c3', name: 'Diajak bermusyawarah', question: 'Siapa 1 orang yang pendapatnya paling kamu dengarkan ketika ada keputusan bersama?', type: 'pos', picks: 1, weights: [1] }
+    ],
+    tolak: [
+      { id: 'c1', name: 'Diajak kerja sama', question: 'Tulis 2 nama yang paling enak diajak bekerja sama, urutkan dari yang paling enak.', type: 'pos', picks: 2, weights: [2, 1] },
+      { id: 'c2', name: 'Kurang cocok bekerja sama', question: 'Tulis 1 nama yang paling kurang cocok diajak bekerja sama.', type: 'neg', picks: 1, weights: [1] }
+    ]
+  };
+  function applyPreset(key) {
+    P.criteria = JSON.parse(JSON.stringify(PRESETS[key]));
+    V.active = P.criteria.map(function (c) { return c.id; });
+    if (P.criteria.filter(function (c) { return c.type === 'pos'; }).length > 1 && V.colorBy === 'rank') V.colorBy = 'criterion';
+    normalize(); touch(); renderInstrumen();
+    toast('Instrumen diganti. Isi kolom pilihan baru di tab Data.');
+  }
+
+  /* ---------- Data ---------- */
+  function dataCols() {
+    var cols = [];
+    P.criteria.forEach(function (c) { for (var k = 1; k <= c.picks; k++) cols.push({ c: c, k: k }); });
+    return cols;
+  }
+  function renderDataTable() {
+    var cols = dataCols(), c0 = ctx();
+    var h = '<table class="dt"><thead><tr><th>No</th><th>Nama</th><th>JK</th><th>' + esc(c0.groupLabel) + '</th>';
+    cols.forEach(function (x) { h += '<th class="ch"><span class="dot" style="background:' + critColor(x.c) + '"></span>' + esc(x.c.name) + (x.c.picks > 1 ? ' · P' + x.k : '') + (x.c.type === 'neg' ? ' (menolak)' : '') + '</th>'; });
+    h += '<th></th></tr></thead><tbody>';
+    var an = ensure().an, badKey = {};
+    an.issues.forEach(function (it) { badKey[it.member + '|' + it.crit + '|' + it.pick] = it.type; });
+    P.members.forEach(function (m, i) {
+      h += '<tr data-i="' + i + '"><td class="no">' + (i + 1) + '</td>' +
+        '<td><input class="nm" type="text" data-f="name" data-old="' + esc(m.name) + '" value="' + esc(m.name) + '" placeholder="Nama anggota" aria-label="Nama anggota ' + (i + 1) + '"></td>' +
+        '<td><select class="jk" data-f="gender" aria-label="Jenis kelamin"><option value="">–</option><option value="L"' + (m.gender === 'L' ? ' selected' : '') + '>L</option><option value="P"' + (m.gender === 'P' ? ' selected' : '') + '>P</option></select></td>' +
+        '<td><input type="text" data-f="group" value="' + esc(m.group) + '" aria-label="Grup"></td>';
+      cols.forEach(function (x) {
+        var v = ((P.choices[i] || {})[x.c.id] || [])[x.k - 1] || '';
+        var bad = badKey[i + '|' + x.c.id + '|' + x.k];
+        h += '<td><input type="text" list="names" data-f="ch" data-c="' + x.c.id + '" data-k="' + (x.k - 1) + '" value="' + esc(v) + '"' + (bad ? ' class="bad" title="' + (bad === 'unknown' ? 'Nama tidak dikenali' : bad === 'ambiguous' ? 'Nama ambigu' : bad === 'self' ? 'Memilih diri sendiri' : 'Nama ganda pada kriteria ini') + '"' : '') + ' aria-label="' + esc(x.c.name) + ' pilihan ' + x.k + ', anggota ' + (i + 1) + '"></td>';
+      });
+      h += '<td><button class="icon" type="button" data-act="delMember" aria-label="Hapus anggota ' + (i + 1) + '">×</button></td></tr>';
+    });
+    h += '</tbody></table>';
+    if (!P.members.length) h = '<p class="muted" style="padding:18px">Tabel masih kosong. Tambahkan anggota, tempel dari Excel, atau unggah berkas.</p>';
+    $('#dataTable').innerHTML = h;
+    refreshNames(); renderIssues();
+    $('#pasteHint').textContent = 'Urutan kolom: Nama, JK (L/P), ' + c0.groupLabel + (cols.length ? ', ' + cols.map(function (x) { return x.c.name + (x.c.picks > 1 ? ' P' + x.k : ''); }).join(', ') : '') + '. Baris pertama boleh berupa judul kolom.';
+  }
+  function refreshNames() {
+    $('#names').innerHTML = P.members.filter(function (m) { return m.name; }).map(function (m) { return '<option value="' + esc(m.name) + '">'; }).join('');
+  }
+  function renderIssues() {
+    var an = ensure().an, box = $('#issues');
+    if (!P.members.length) { box.innerHTML = ''; return; }
+    if (!an.issues.length) { box.innerHTML = '<p class="ok-box">Semua pilihan terbaca. ' + an.edges.length + ' pilihan valid dari ' + P.members.length + ' anggota.</p>'; return; }
+    var label = { unknown: 'tidak dikenali', ambiguous: 'ambigu (cocok dengan lebih dari satu nama)', self: 'memilih diri sendiri', duplicate: 'nama ganda pada kriteria yang sama' };
+    var cn = {}; P.criteria.forEach(function (c) { cn[c.id] = c.name; });
+    var items = an.issues.slice(0, 10).map(function (it) {
+      var nm = P.members[it.member].name || ('Anggota ' + (it.member + 1));
+      return '<li>' + esc(nm) + ', ' + esc(cn[it.crit] || '') + ' P' + it.pick + ': “' + esc(it.text) + '” ' + label[it.type] + '</li>';
+    }).join('');
+    box.innerHTML = '<div class="issue-box"><strong>' + an.issues.length + ' pilihan tidak terbaca dan diabaikan dalam analisis.</strong><ul>' + items + (an.issues.length > 10 ? '<li>dan ' + (an.issues.length - 10) + ' lainnya (sel bermasalah diberi warna merah)</li>' : '') + '</ul></div>';
+  }
+  function markCells() {
+    var an = ensure().an, bad = {};
+    an.issues.forEach(function (it) { bad[it.member + '|' + it.crit + '|' + (it.pick - 1)] = 1; });
+    $$('#dataTable input[data-f="ch"]').forEach(function (inp) {
+      var i = +inp.closest('tr').dataset.i;
+      inp.classList.toggle('bad', !!bad[i + '|' + inp.dataset.c + '|' + inp.dataset.k]);
+    });
+  }
+  var issueTimer;
+  function scheduleIssues() { clearTimeout(issueTimer); issueTimer = setTimeout(function () { renderIssues(); markCells(); }, 350); }
+
+  function normGender(x) {
+    var t = S.norm(x);
+    if (['l', 'lk', 'laki', 'laki-laki', 'laki laki', 'pria', 'male', 'm', 'cowok'].indexOf(t) >= 0) return 'L';
+    if (['p', 'pr', 'perempuan', 'wanita', 'female', 'f', 'cewek'].indexOf(t) >= 0) return 'P';
+    return '';
+  }
+  function parseText(text) {
+    var lines = text.replace(/\r/g, '').split('\n').filter(function (l) { return l.trim() !== ''; });
+    if (!lines.length) return [];
+    var d = lines[0].indexOf('\t') >= 0 ? '\t' : (lines[0].indexOf(';') >= 0 ? ';' : ',');
+    return lines.map(function (l) { return l.split(d).map(function (x) { return x.trim().replace(/^"|"$/g, ''); }); });
+  }
+  function applyTable(rows) {
+    rows = rows.filter(function (r) { return r.some(function (x) { return String(x).trim() !== ''; }); });
+    while (rows.length && S.norm(rows[0][0]) === 'rahasia') rows.shift();
+    if (!rows.length) { toast('Tidak ada baris yang terbaca.'); return; }
+    var hdr = rows[0].map(function (x) { return S.norm(x); });
+    var hasHeader = ['nama', 'name', 'no', 'nomor'].indexOf(hdr[0]) >= 0 || hdr.indexOf('nama') >= 0;
+    var idx = { no: -1, name: 0, gender: 1, group: 2 };
+    var start = 0;
+    if (hasHeader) {
+      start = 1;
+      idx = { no: -1, name: -1, gender: -1, group: -1 };
+      hdr.forEach(function (h, i) {
+        if (idx.name < 0 && (h === 'nama' || h === 'name')) idx.name = i;
+        else if (idx.no < 0 && (h === 'no' || h === 'nomor')) idx.no = i;
+        else if (idx.gender < 0 && ['jk', 'jenis kelamin', 'gender', 'kelamin'].indexOf(h) >= 0) idx.gender = i;
+        else if (idx.group < 0 && ['grup', 'kelompok', 'kelas', 'divisi', 'unit', 'tim', 'rombel', 'sub-kelompok', 'divisi/unit', 'kelas/rombel', 'sub kelompok', 'rt', 'rw', 'dusun', 'seksi', 'seksi/rt', 'rt/rw/dusun', 'kelompok/sesi', 'sesi'].indexOf(h) >= 0) idx.group = i;
+      });
+      if (idx.name < 0) idx.name = idx.no === 0 ? 1 : 0;
+    }
+    var used = new Set([idx.no, idx.name, idx.gender, idx.group]);
+    var width = Math.max.apply(null, rows.map(function (r) { return r.length; }));
+    var choiceCols = [];
+    var firstFree = hasHeader ? 0 : 3;
+    for (var i = firstFree; i < width; i++) if (!used.has(i)) choiceCols.push(i);
+    if (hasHeader) {
+      var maxFound = Math.max(idx.no, idx.name, idx.gender, idx.group);
+      choiceCols = choiceCols.filter(function (i) { return i > maxFound; });
+    }
+    var slots = dataCols();
+    var members = [], choices = [];
+    rows.slice(start).forEach(function (r) {
+      var nm = String(r[idx.name] == null ? '' : r[idx.name]).trim();
+      var m = { name: nm, gender: idx.gender >= 0 ? normGender(r[idx.gender]) : '', group: idx.group >= 0 ? String(r[idx.group] == null ? '' : r[idx.group]).trim() : '' };
+      var ch = {};
+      P.criteria.forEach(function (c) { ch[c.id] = []; });
+      choiceCols.forEach(function (ci, j) {
+        var s = slots[j]; if (!s) return;
+        ch[s.c.id][s.k - 1] = String(r[ci] == null ? '' : r[ci]).trim();
+      });
+      members.push(m); choices.push(ch);
+    });
+    P.members = members; P.choices = choices;
+    normalize(); touch(); focus = null;
+    renderDataTable();
+    var extra = choiceCols.length - slots.length;
+    toast(members.length + ' anggota dimuat, ' + Math.min(choiceCols.length, slots.length) + ' kolom pilihan terbaca.' + (extra > 0 ? ' ' + extra + ' kolom berlebih diabaikan; tambah kriteria atau pilihan di tab Instrumen.' : ''));
+  }
+
+  /* ---------- Kontrol sosiogram ---------- */
+  function opt(list, cur) { return list.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === cur ? ' selected' : '') + '>' + o[1] + '</option>'; }).join(''); }
+  function renderControls() {
+    var hasNeg = P.criteria.some(function (c) { return c.type === 'neg' && V.active.indexOf(c.id) >= 0; });
+    var h = '<div class="card"><fieldset><legend>Model gambar</legend><div class="seg">' +
+      '<button type="button" data-style="target" aria-pressed="' + (V.model === 'target') + '">Target<small>Cincin menurut status</small></button>' +
+      '<button type="button" data-style="network" aria-pressed="' + (V.model === 'network') + '">Jaringan<small>Klaster menurut kelompok</small></button></div></fieldset></div>';
+    h += '<div class="card"><fieldset><legend>Kriteria ditampilkan</legend><div class="row">' +
+      P.criteria.map(function (c) {
+        return '<label class="chk"><input type="checkbox" data-active="' + c.id + '"' + (V.active.indexOf(c.id) >= 0 ? ' checked' : '') + '><span><span class="dot" style="background:' + critColor(c) + ';margin-right:6px"></span>' + esc(c.name) + (c.type === 'neg' ? ' <span class="muted">(menolak)</span>' : '') + '</span></label>';
+      }).join('') + '</div></fieldset></div>';
+    h += '<div class="card"><fieldset><legend>Garis</legend><div class="row">' +
+      '<label class="f">Warna garis menunjukkan<select data-v="colorBy">' + opt([['rank', 'Peringkat pilihan'], ['criterion', 'Kriteria'], ['mutual', 'Timbal balik / satu arah']], V.colorBy) + '</select></label>' +
+      '<label class="f">Gaya garis menunjukkan<select data-v="dashBy">' + opt([['none', 'Semua garis utuh'], ['mutual', 'Timbal balik utuh, satu arah putus-putus'], ['rank', 'Peringkat: utuh, putus, titik-garis']], V.dashBy) + '</select></label>' +
+      '<label class="chk"><input type="checkbox" data-v="mergeMutual"' + (V.mergeMutual ? ' checked' : '') + '><span>Gabungkan pilihan timbal balik menjadi satu garis dua panah</span></label>' +
+      '<label class="chk"><input type="checkbox" data-v="widthByRank"' + (V.widthByRank ? ' checked' : '') + '><span>Garis lebih tebal untuk peringkat 1</span></label>' +
+      (hasNeg ? '<label class="chk"><input type="checkbox" data-v="showNeg"' + (V.showNeg ? ' checked' : '') + '><span>Tampilkan penolakan (titik-titik ungu)</span></label>' : '') +
+      '</div></fieldset></div>';
+    h += '<div class="card"><fieldset><legend>Simpul</legend><div class="row">' +
+      '<label class="f">Label<select data-v="label">' + opt([['nomor', 'Nomor'], ['nama', 'Nama'], ['nomor+nama', 'Nomor dan nama']], V.label) + '</select></label>' +
+      '<label class="f">Warna isi<select data-v="nodeFill">' + opt([['putih', 'Putih'], ['gender', 'Jenis kelamin'], ['kategori', 'Kategori status'], ['grup', 'Grup']], V.nodeFill) + '</select></label>' +
+      (V.model === 'network' ? '<label class="f">Kelompokkan berdasarkan<select data-v="groupBy">' + opt([['none', 'Tanpa pengelompokan'], ['gender', 'Jenis kelamin'], ['group', 'Grup']], V.groupBy) + '</select></label>' : '') +
+      '</div></fieldset></div>';
+    $('#controls').innerHTML = h;
+  }
+
+  /* ---------- panggung ---------- */
+  var stageTimer;
+  function scheduleStage() {
+    var paper = $('#paper');
+    if (tab !== 'sosiogram') return;
+    paper.classList.add('busy');
+    clearTimeout(stageTimer);
+    stageTimer = setTimeout(function () { drawStage(); paper.classList.remove('busy'); }, 30);
+  }
+  function drawStage() {
+    var c = ensure(), an = c.an, layout = c.layout, paper = $('#paper');
+    if (!layout || an.N < 2) { paper.innerHTML = '<p class="empty">Tambahkan minimal 2 anggota di tab Data untuk membuat sosiogram.</p>'; $('#detail').innerHTML = ''; return; }
+    var sub = an.N + ' anggota';
+    paper.innerHTML = S.renderSVG(an, layout, V, { title: P.meta.title || 'Sosiogram', subtitle: sub, focus: focus, owner: P.meta.owner });
+    renderDetail();
+  }
+  function chip(cat) { return '<span class="cat" style="background:' + S.CAT_FILL[cat] + '">' + S.CAT_LABEL[cat] + '</span>'; }
+  function nm(an, i) { return esc(an.members[i].name) + ' (' + an.members[i].no + ')'; }
+  function renderDetail() {
+    var d = $('#detail'), an = cache.an;
+    if (focus == null || !an || !an.members[focus]) { d.innerHTML = ''; return; }
+    var m = an.members[focus], cn = {}; P.criteria.forEach(function (c) { cn[c.id] = c.name; });
+    var outs = m.out.map(function (o) { return nm(an, o.to) + ' <span class="muted">(P' + o.rank + (an.crits.length > 1 ? ', ' + esc(cn[o.c]) : '') + ')</span>'; }).join(', ') || '–';
+    var ins = m.chosenBy.map(function (o) { return nm(an, o.from) + ' <span class="muted">(P' + o.rank + ')</span>'; }).join(', ') || '–';
+    var mut = m.mutualWith.map(function (j) { return nm(an, j); }).join(', ') || '–';
+    d.innerHTML = '<div class="card"><p><strong>' + m.no + '. ' + esc(m.name) + '</strong> ' + chip(m.cat) + ' <span class="muted">skor ' + m.score + ' (z = ' + m.z.toFixed(2).replace('.', ',') + '), dipilih ' + m.recvDistinct + ' orang</span></p>' +
+      '<p style="margin-top:6px"><b>Memilih:</b> ' + outs + '</p><p><b>Dipilih oleh:</b> ' + ins + '</p><p><b>Timbal balik dengan:</b> ' + mut + '</p>' +
+      (m.outNeg.length || m.chosenByNeg.length ? '<p><b>Menolak:</b> ' + (m.outNeg.map(function (o) { return nm(an, o.to); }).join(', ') || '–') + ' · <b>Ditolak oleh:</b> ' + (m.chosenByNeg.map(function (o) { return nm(an, o.from); }).join(', ') || '–') + '</p>' : '') + '</div>';
+  }
+
+  var drag = null;
+  function bindStage() {
+    var paper = $('#paper');
+    paper.addEventListener('pointerdown', function (e) {
+      var g = e.target.closest ? e.target.closest('[data-node]') : null;
+      if (!g) { if (focus != null) { focus = null; drawStage(); } return; }
+      var id = +g.dataset.node, lay = cache.layout;
+      if (!lay) return;
+      drag = { id: id, sx: e.clientX, sy: e.clientY, ox: lay.pos[id].x, oy: lay.pos[id].y, moved: false };
+      try { paper.setPointerCapture(e.pointerId); } catch (x) { /* abaikan */ }
+    });
+    paper.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var svg = paper.querySelector('svg'); if (!svg) return;
+      var k = cache.layout.W / svg.getBoundingClientRect().width;
+      var dx = (e.clientX - drag.sx) * k, dy = (e.clientY - drag.sy) * k;
+      if (!drag.moved && Math.hypot(dx, dy) > 4) drag.moved = true;
+      if (drag.moved) {
+        cache.layout.pos[drag.id] = { x: clamp(drag.ox + dx, 10, cache.layout.W - 10), y: clamp(drag.oy + dy, 10, cache.layout.H - 10) };
+        if (!drag.raf) drag.raf = requestAnimationFrame(function () { if (drag) { drag.raf = 0; drawStage(); } });
+      }
+    });
+    function end() {
+      if (!drag) return;
+      var moved = drag.moved, id = drag.id;
+      drag = null;
+      if (!moved) focus = focus === id ? null : id;
+      drawStage();
+    }
+    paper.addEventListener('pointerup', end);
+    paper.addEventListener('pointercancel', function () { drag = null; drawStage(); });
+  }
+
+  /* ---------- unduhan ---------- */
+  function fallbackDownload(name, data) {
+    try {
+      var blob = data instanceof Blob ? data : new Blob([data]);
+      var url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 3000);
+      toast('Berkas diunduh: ' + name);
+      return true;
+    } catch (e) { return false; }
+  }
+  function saveFile(name, data) {
+    var cl = window.claude;
+    if (!cl || !cl.use) {
+      // dibuka di luar claude.ai (hosting sendiri): unduhan browser biasa
+      if (!fallbackDownload(name, data)) toast('Unduhan tidak tersedia di tampilan ini.');
+      return Promise.resolve();
+    }
+    return cl.use('downloads').then(function (dl) {
+      if (!dl) { toast('Unduhan tidak tersedia di tampilan ini.'); return; }
+      return dl.save({ filename: name, data: data }).then(function () { toast('Berkas disimpan: ' + name); }, function (err) {
+        if (err && err.code === 'declined') return;
+        toast('Berkas tidak dapat disimpan' + (err && err.message ? ': ' + err.message : '.'));
+      });
+    });
+  }
+  function fileBase() { return (P.meta.title || 'sosiogram').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'sosiogram'; }
+  function currentSVG() {
+    var c = ensure(); if (!c.layout) return null;
+    return S.renderSVG(c.an, c.layout, V, { title: P.meta.title || 'Sosiogram', subtitle: c.an.N + ' anggota', focus: null, owner: P.meta.owner });
+  }
+  function exportSvg() {
+    var svg = currentSVG(); if (!svg) { toast('Belum ada sosiogram untuk diunduh.'); return; }
+    saveFile(fileBase() + '.svg', new Blob([svg], { type: 'image/svg+xml' }));
+  }
+  function exportPng() {
+    var svg = currentSVG(); if (!svg) { toast('Belum ada sosiogram untuk diunduh.'); return; }
+    var W = cache.layout.W, H = cache.layout.H, sc = 2;
+    var img = new Image();
+    img.onload = function () {
+      var cv = document.createElement('canvas'); cv.width = W * sc; cv.height = H * sc;
+      var g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cv.width, cv.height); g.drawImage(img, 0, 0, cv.width, cv.height);
+      cv.toBlob(function (b) { if (b) saveFile(fileBase() + '.png', b); else toast('PNG gagal dibuat. Coba unduh SVG.'); }, 'image/png');
+    };
+    img.onerror = function () { toast('PNG gagal dibuat. Coba unduh SVG.'); };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+  function saveProject() {
+    var s = JSON.stringify({ app: 'peta-sosiometri', version: 1, P: P, V: V }, null, 1);
+    saveFile('proyek-' + fileBase() + '.json', new Blob([s], { type: 'application/json' }));
+  }
+  function openProject(file) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        var o = JSON.parse(fr.result);
+        if (!o || o.app !== 'peta-sosiometri' || !o.P) throw new Error('format');
+        P = o.P; V = Object.assign(Object.assign({ zHigh: 1, zLow: -0.5, seed: 1, active: [] }, defaultView('target')), o.V || {});
+        normalize(); dirty = true; cache.sig = null; focus = null; touch({ keepSample: true });
+        show(tab); toast('Proyek dibuka: ' + (P.meta.title || 'tanpa judul'));
+      } catch (e) { toast('Berkas bukan proyek Sosiogram yang valid.'); }
+    };
+    fr.readAsText(file);
+  }
+  function importFile(file) {
+    var name = file.name.toLowerCase();
+    if (/\.(xlsx|xls)$/.test(name)) {
+      if (!window.XLSX) { toast('Pembaca Excel belum termuat. Coba tempel dari Excel.'); return; }
+      var fr = new FileReader();
+      fr.onload = function () {
+        try {
+          var wb = XLSX.read(fr.result, { type: 'array' });
+          var ws = wb.Sheets[wb.SheetNames[0]];
+          applyTable(XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' }));
+        } catch (e) { toast('Berkas Excel tidak dapat dibaca.'); }
+      };
+      fr.readAsArrayBuffer(file);
+    } else {
+      var fr2 = new FileReader();
+      fr2.onload = function () { applyTable(parseText(String(fr2.result))); };
+      fr2.readAsText(file);
+    }
+  }
+  function headerRow() {
+    var r = ['Nama', 'JK', ctx().groupLabel];
+    dataCols().forEach(function (x) { r.push(x.c.name + (x.c.picks > 1 ? ' P' + x.k : '')); });
+    return r;
+  }
+  function exportTemplate() {
+    if (!window.XLSX) { toast('Pembuat Excel belum termuat.'); return; }
+    var ws = XLSX.utils.aoa_to_sheet([headerRow(), ['Contoh Nama', 'L', '', 'Nama teman 1', 'Nama teman 2']]);
+    var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Data');
+    var arr = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+    saveFile('templat-sosiogram.xlsx', new Blob([arr], { type: 'application/octet-stream' }));
+  }
+  function exportExcel() {
+    if (!window.XLSX) { toast('Pembuat Excel belum termuat.'); return; }
+    var c = ensure(), an = c.an, Sm = an.summary, wb = XLSX.utils.book_new();
+    var add = function (name, aoa, widths) {
+      var ws = XLSX.utils.aoa_to_sheet([['RAHASIA'], ['']].concat(aoa));
+      if (widths) ws['!cols'] = widths.map(function (w) { return { wch: w }; });
+      XLSX.utils.book_append_sheet(wb, ws, name);
+    };
+    add('Ringkasan', [
+      ['Judul', P.meta.title], ['Penanggung jawab', P.meta.owner || '(belum diisi)'], ['Pengembang aplikasi', 'Hammad Zahid Muharram, M.Psi., Psikolog'], ['Konteks', ctx().place], ['Kriteria aktif', an.crits.map(function (x) { return x.name; }).join('; ')],
+      ['Jumlah anggota', Sm.N], ['Pilihan positif terbaca', Sm.nPos], ['Pilihan negatif terbaca', Sm.nNeg],
+      ['Rata-rata skor', +Sm.mean.toFixed(3)], ['SD skor (populasi)', +Sm.sd.toFixed(3)], ['Batas populer (z)', Sm.zHigh], ['Batas terabaikan (z)', Sm.zLow],
+      ['Populer', Sm.counts.bintang], ['Rata-rata', Sm.counts.rata], ['Terabaikan', Sm.counts.abai], ['Isolat', Sm.counts.isolat],
+      ['Pasangan timbal balik', Sm.mutualPairs], ['Indeks kohesi (pasangan timbal balik / seluruh pasangan)', +Sm.cohesion.toFixed(4)],
+      ['Persentase pilihan berbalas', +Sm.reciprocity.toFixed(4)], ['Rangkaian timbal balik', Sm.cliques]
+    ].concat([[''], ['Narasi']]).concat(S.narrative(an, P.meta.context).map(function (t) { return [t]; })), [52, 60]);
+    var posCrits = an.crits.filter(function (x) { return x.type === 'pos'; });
+    var head = ['No', 'Nama', 'JK', 'Grup'];
+    posCrits.forEach(function (x) { for (var k = 1; k <= x.picks; k++) head.push(x.name + ' diterima P' + k); });
+    head = head.concat(['Jumlah pemilih', 'Skor terbobot', 'z', 'Kategori', 'Indeks status', 'Timbal balik (jumlah)', 'Memilih', 'Dipilih oleh', 'Ditolak oleh (jumlah)']);
+    if (an.coie) head.push('Klasifikasi Coie');
+    var rows = an.members.map(function (m) {
+      var r = [m.no, m.name, m.gender, m.group];
+      posCrits.forEach(function (x) { for (var k = 0; k < x.picks; k++) r.push(m.recv[x.id][k]); });
+      r = r.concat([m.recvDistinct, m.score, +m.z.toFixed(3), S.CAT_LABEL[m.cat], +m.statusIndex.toFixed(3), m.mutualWith.length,
+        m.out.map(function (o) { return an.members[o.to].name; }).join('; '), m.chosenBy.map(function (o) { return an.members[o.from].name; }).join('; '), m.negRecv]);
+      if (an.coie) r.push(m.coie);
+      return r;
+    });
+    add('Individu', [head].concat(rows), [5, 22, 5, 14]);
+    var mh = [''].concat(an.members.map(function (m) { return m.name; })).concat(['Keluar']);
+    var mrows = an.members.map(function (m, i) {
+      var r = [m.name], tot = 0;
+      an.members.forEach(function (o, j) {
+        var v = 0; an.posEdges.forEach(function (e) { if (e.from === i && e.to === j) v += an.weight(e); });
+        r.push(v || ''); tot += v;
+      });
+      r.push(tot); return r;
+    });
+    mrows.push(['Masuk (skor)'].concat(an.members.map(function (m) { return m.score; })).concat(['']));
+    add('Sosiomatriks', [mh].concat(mrows), [16]);
+    if (an.negEdges.length) {
+      var nh = [''].concat(an.members.map(function (m) { return m.name; }));
+      var nr = an.members.map(function (m, i) { return [m.name].concat(an.members.map(function (o, j) { return an.negEdges.filter(function (e) { return e.from === i && e.to === j; }).length || ''; })); });
+      add('Penolakan', [nh].concat(nr), [16]);
+    }
+    var cn = {}; P.criteria.forEach(function (x) { cn[x.id] = x.name; });
+    add('Timbal balik', [['Anggota A', 'Anggota B', 'Kriteria']].concat(an.mutualPairs.map(function (p) { return [an.members[p.a].name, an.members[p.b].name, p.critList.map(function (id) { return cn[id]; }).join('; ')]; })), [22, 22, 40]);
+    add('Data', [headerRow()].concat(P.members.map(function (m, i) {
+      var r = [m.name, m.gender, m.group];
+      dataCols().forEach(function (x) { r.push(((P.choices[i] || {})[x.c.id] || [])[x.k - 1] || ''); });
+      return r;
+    })), [22, 5, 14]);
+    if (an.issues.length) add('Catatan data', [['Anggota', 'Kriteria', 'Pilihan ke', 'Isi', 'Masalah']].concat(an.issues.map(function (it) {
+      return [P.members[it.member].name, cn[it.crit], it.pick, it.text, it.type];
+    })), [22, 22, 10, 22, 14]);
+    var arr = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+    saveFile('hasil-' + fileBase() + '.xlsx', new Blob([arr], { type: 'application/octet-stream' }));
+  }
+
+  /* ---------- Hasil ---------- */
+  function pct(x) { return (x * 100).toFixed(0) + '%'; }
+  function pct1(x) { return (x * 100).toFixed(1).replace('.', ',') + '%'; }
+  function renderResults() {
+    var c = ensure(), an = c.an, S0 = an.summary, box = $('#results');
+    if (an.N < 2) { box.innerHTML = '<div class="card"><p class="muted">Tambahkan data di tab Data untuk melihat hasil.</p></div>'; return; }
+    var cx = ctx(), h = '';
+    if (!(P.meta.owner || '').trim()) h += '<div class="issue-box" style="margin-bottom:16px">Nama penanggung jawab data belum diisi, sehingga gambar dan Excel hasil ekspor akan bertanda “(belum diisi)”. <button class="btn" type="button" data-goto="instrumen">Isi di tab Instrumen</button></div>';
+    h += '<div class="card"><div class="row-between"><h2>Ringkasan kelompok</h2><button class="btn primary" type="button" id="btnXlsx">Unduh Excel</button></div>' +
+      '<p class="lead">Kriteria aktif: ' + an.crits.map(function (x) { return esc(x.name); }).join(', ') + '. Ubah pilihan kriteria di tab Sosiogram.</p>' +
+      '<dl class="stats">' +
+      stat('Anggota', S0.N) + stat('Pilihan positif', S0.nPos) + (S0.nNeg ? stat('Penolakan', S0.nNeg) : '') +
+      stat('Populer', S0.counts.bintang) + stat('Terabaikan', S0.counts.abai) + stat('Isolat', S0.counts.isolat) +
+      stat('Pasangan timbal balik', S0.mutualPairs) + stat('Pilihan berbalas', pct(S0.reciprocity)) + stat('Indeks kohesi', pct1(S0.cohesion)) +
+      stat('Rangkaian timbal balik', S0.cliques) + stat('Rata-rata skor', S0.mean.toFixed(1).replace('.', ',') + ' <small>SD ' + S0.sd.toFixed(1).replace('.', ',') + '</small>') + '</dl></div>';
+    h += '<div class="card narr"><h2>Interpretasi otomatis</h2><p class="lead">Disusun dari angka di atas untuk konteks ' + esc(cx.place) + '. Sunting seperlunya sebelum dipakai dalam laporan.</p>' + S.narrative(an, P.meta.context).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>';
+
+    // tabel individu
+    var ms = an.members.slice();
+    if (sortMode === 'skor') ms.sort(function (a, b) { return b.score - a.score || a.no - b.no; });
+    var hasGroup = ms.some(function (m) { return m.group; });
+    h += '<div class="card"><div class="row-between"><h2>Skor individu</h2><label class="f" style="flex-direction:row;align-items:center;gap:8px">Urutkan<select id="sortSel" style="width:auto"><option value="skor"' + (sortMode === 'skor' ? ' selected' : '') + '>Skor tertinggi</option><option value="no"' + (sortMode === 'no' ? ' selected' : '') + '>Nomor urut</option></select></label></div>' +
+      '<div class="tblwrap"><table class="rtbl"><thead><tr><th class="num">No</th><th>Nama</th><th>JK</th>' + (hasGroup ? '<th>Grup</th>' : '') + '<th class="num">Dipilih</th><th class="num">P1</th><th class="num">P2</th><th class="num">P3</th><th class="num">Skor</th><th class="num">z</th><th>Kategori</th><th class="num">Timbal balik</th>' + (S0.nNeg ? '<th class="num">Ditolak</th>' : '') + (an.coie ? '<th>Coie</th>' : '') + '</tr></thead><tbody>';
+    var posCrits = an.crits.filter(function (x) { return x.type === 'pos'; });
+    ms.forEach(function (m) {
+      var r = [0, 0, 0];
+      posCrits.forEach(function (x) { for (var k = 0; k < 3; k++) r[k] += m.recv[x.id][k]; });
+      h += '<tr><td class="num">' + m.no + '</td><td><strong>' + esc(m.name) + '</strong></td><td>' + (m.gender || '–') + '</td>' + (hasGroup ? '<td>' + esc(m.group) + '</td>' : '') +
+        '<td class="num">' + m.recvDistinct + '</td><td class="num">' + r[0] + '</td><td class="num">' + r[1] + '</td><td class="num">' + r[2] + '</td><td class="num"><strong>' + m.score + '</strong></td><td class="num">' + m.z.toFixed(2).replace('.', ',') + '</td><td>' + chip(m.cat) + '</td><td class="num">' + m.mutualWith.length + '</td>' +
+        (S0.nNeg ? '<td class="num">' + m.negRecv + '</td>' : '') + (an.coie ? '<td>' + esc(m.coie) + '</td>' : '') + '</tr>';
+    });
+    h += '</tbody></table></div><p class="note" style="margin-top:8px">P1, P2, P3 adalah jumlah pilihan yang diterima menurut peringkat, dijumlahkan pada kriteria positif aktif. Skor = pilihan diterima × bobot peringkat. z memakai SD populasi.</p></div>';
+
+    // per kriteria
+    h += '<div class="card"><h2>Per kriteria</h2><div class="tblwrap"><table class="rtbl"><thead><tr><th>Kriteria</th><th>Jenis</th><th class="num">Pilihan terbaca</th><th class="num">Pasangan timbal balik</th><th class="num">Tidak dipilih</th><th>Paling banyak dipilih</th></tr></thead><tbody>' +
+      an.perCrit.map(function (p) {
+        return '<tr><td><span class="dot" style="background:' + critColor(p.crit) + ';margin-right:6px"></span>' + esc(p.crit.name) + '</td><td>' + (p.crit.type === 'pos' ? 'Memilih' : 'Menolak') + '</td><td class="num">' + p.edges + '</td><td class="num">' + p.mutualPairs + '</td><td class="num">' + p.isolates + '</td><td>' + p.top.filter(function (t) { return t.n > 0; }).map(function (t) { return esc(t.m.name) + ' (' + t.n + ')'; }).join(', ') + '</td></tr>';
+      }).join('') + '</tbody></table></div></div>';
+
+    // timbal balik & klik
+    var cn = {}; P.criteria.forEach(function (x) { cn[x.id] = x.name; });
+    h += '<div class="card"><h2>Timbal balik dan rangkaian</h2>';
+    if (an.mutualPairs.length) {
+      h += '<h3>Pasangan timbal balik (' + an.mutualPairs.length + ')</h3><div class="chips">' + an.mutualPairs.map(function (p) {
+        return '<span class="chip">' + esc(an.members[p.a].name) + ' ⇄ ' + esc(an.members[p.b].name) + (an.crits.length > 1 ? ' <span class="muted">· ' + p.critList.map(function (id) { return esc(cn[id]); }).join(', ') + '</span>' : '') + '</span>';
+      }).join('') + '</div>';
+      h += '<h3>Rangkaian timbal balik</h3><p class="note" style="margin-bottom:6px">Kumpulan anggota yang terhubung melalui pilihan berbalas. Rangkaian ≥ 3 orang menandai kelompok pertemanan yang rapat.</p><div class="chips">' + an.cliques.map(function (cl, i) {
+        return '<span class="chip"><strong>' + (i + 1) + '.</strong> ' + cl.map(function (j) { return esc(an.members[j].name); }).join(', ') + ' <span class="muted">(' + cl.length + ')</span></span>';
+      }).join('') + '</div>';
+    } else h += '<p class="muted">Belum ada pasangan timbal balik pada kriteria aktif.</p>';
+    h += '</div>';
+
+    // coie
+    if (an.coie) {
+      var g = {};
+      an.coie.forEach(function (x) { (g[x.type] = g[x.type] || []).push(an.members[x.idx].name); });
+      h += '<div class="card"><h2>Klasifikasi Coie</h2><p class="lead">Memakai jumlah pilihan positif (LM) dan penolakan (LL) yang diterima, dibakukan dalam kelompok. Istilah populer di sini mengikuti Coie dkk. (berdasarkan preferensi sosial), berbeda dari kategori status di atas yang berdasarkan skor pilihan. Populer: preferensi sosial &gt; 1 SD. Ditolak: preferensi &lt; −1 SD. Terabaikan dan kontroversial menurut dampak sosial. Pada kelompok kecil, baca sebagai petunjuk awal.</p><div class="tblwrap"><table class="rtbl"><thead><tr><th>Tipe</th><th class="num">Jumlah</th><th>Anggota</th></tr></thead><tbody>' +
+        ['Populer', 'Kontroversial', 'Rata-rata', 'Terabaikan', 'Ditolak'].map(function (t) { return '<tr><td>' + t + '</td><td class="num">' + (g[t] || []).length + '</td><td style="white-space:normal">' + esc((g[t] || []).join(', ') || '–') + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+    }
+
+    // sosiomatriks
+    h += '<div class="card"><div class="row-between"><h2>Sosiomatriks</h2><label class="f" style="flex-direction:row;align-items:center;gap:8px">Kriteria<select id="mxSel" style="width:auto"><option value="all">Gabungan positif (terbobot)</option>' + an.crits.map(function (x) { return '<option value="' + x.id + '"' + (matrixCrit === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('') + '</select></label></div>' +
+      '<p class="note" style="margin-bottom:8px">Baris = pemilih, kolom = yang dipilih. Angka = bobot pilihan (gabungan) atau peringkat (satu kriteria); tanda − = penolakan.</p>' + matrixHTML(an) + '</div>';
+    box.innerHTML = h;
+  }
+  function stat(l, v) { return '<div><dt>' + l + '</dt><dd>' + v + '</dd></div>'; }
+  function matrixHTML(an) {
+    var N = an.N, small = N > 40, cells = {}, neg = {};
+    var sel = matrixCrit !== 'all' && an.critMap[matrixCrit] && an.crits.indexOf(an.critMap[matrixCrit]) >= 0 ? matrixCrit : 'all';
+    an.actEdges.forEach(function (e) {
+      if (sel !== 'all' && e.c !== sel) return;
+      var k = e.from + '|' + e.to;
+      if (e.type === 'neg') { neg[k] = true; return; }
+      cells[k] = (cells[k] || 0) + (sel === 'all' ? an.weight(e) : e.rank);
+    });
+    var h = '<div class="tblwrap"><table class="mx" style="width:auto' + (small ? ';font-size:10px' : '') + '"><thead><tr><th></th>';
+    an.members.forEach(function (m) { h += '<th title="' + esc(m.name) + '">' + m.no + '</th>'; });
+    h += '<th>Σ</th></tr></thead><tbody>';
+    var colTot = new Array(N).fill(0);
+    an.members.forEach(function (m, i) {
+      var tot = 0;
+      h += '<tr><th class="rl">' + m.no + '. ' + esc(m.name) + '</th>';
+      an.members.forEach(function (o, j) {
+        if (i === j) { h += '<td class="self"></td>'; return; }
+        var k = i + '|' + j, v = cells[k], ng = neg[k];
+        if (v) { tot += v; colTot[j] += v; }
+        var bg = v ? 'background:rgba(29,92,140,' + Math.min(0.15 + v * 0.14, 0.75).toFixed(2) + ');color:' + (v >= 3 ? '#fff' : 'inherit') : '';
+        h += '<td' + (ng && !v ? ' class="neg"' : '') + (bg ? ' style="' + bg + '"' : '') + '>' + (v ? v : (ng ? '−' : '')) + '</td>';
+      });
+      h += '<td><strong>' + tot + '</strong></td></tr>';
+    });
+    h += '<tr><th class="rl">Σ masuk</th>' + colTot.map(function (v) { return '<td><strong>' + v + '</strong></td>'; }).join('') + '<td></td></tr></tbody></table></div>';
+    return h;
+  }
+
+  /* ---------- pemuatan contoh ---------- */
+  function loadSample(kind) {
+    var s = SMP.make(kind);
+    P = { meta: Object.assign({}, s.meta, { sample: true, sampleKind: kind, owner: P.meta.owner || '' }), criteria: s.criteria, members: s.members, choices: s.choices };
+    var multi = s.criteria.filter(function (c) { return c.type === 'pos'; }).length > 1;
+    V.active = s.criteria.map(function (c) { return c.id; });
+    if (multi && V.colorBy === 'rank') V.colorBy = 'criterion';
+    if (!multi && V.colorBy === 'criterion') V.colorBy = 'rank';
+    V.seed = 1; focus = null; cache.sig = null;
+    normalize(); dirty = true; touch({ keepSample: true });
+    show(tab);
+  }
+  function clearAll() {
+    P.members = []; P.choices = []; P.meta.sample = false; P.meta.title = '';
+    normalize(); cache.sig = null; focus = null; touch();
+    $('#banner').hidden = true;
+    show(tab === 'sosiogram' || tab === 'hasil' ? 'data' : tab);
+    toast('Data contoh dikosongkan. Instrumen tetap dipertahankan.');
+  }
+
+  /* ---------- pengikatan peristiwa ---------- */
+  function bind() {
+    $$('.tabs button').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.tab); }); });
+    document.addEventListener('click', function (e) { var g = e.target.closest && e.target.closest('[data-goto]'); if (g) show(g.dataset.goto); });
+    $('#btnSample2').addEventListener('click', function () { loadSample('dua'); });
+    $('#btnSample3').addEventListener('click', function () { loadSample('multi'); });
+    $('#btnClear').addEventListener('click', clearAll);
+    $('#btnSaveProj').addEventListener('click', saveProject);
+    $('#fileProject').addEventListener('change', function (e) { if (e.target.files[0]) openProject(e.target.files[0]); e.target.value = ''; });
+
+    // instrumen
+    $('#title').addEventListener('input', function (e) { P.meta.title = e.target.value; touch({ keepSample: true }); });
+    $('#owner').addEventListener('input', function (e) { P.meta.owner = e.target.value; touch({ keepSample: true }); updateOwnerHint(); });
+    $('#context').addEventListener('change', function (e) { P.meta.context = e.target.value; touch({ keepSample: true }); });
+    $('#zHigh').addEventListener('change', function (e) { V.zHigh = clamp(parseFloat(e.target.value) || 1, 0, 3); e.target.value = V.zHigh; touch({ keepSample: true }); });
+    $('#zLow').addEventListener('change', function (e) { var v = parseFloat(e.target.value); V.zLow = clamp(isNaN(v) ? -0.5 : v, -3, 0); e.target.value = V.zLow; touch({ keepSample: true }); });
+    $$('[data-preset]').forEach(function (b) { b.addEventListener('click', function () { applyPreset(b.dataset.preset); }); });
+    $('#addCrit').addEventListener('click', function () {
+      if (P.criteria.length >= 4) return;
+      P.criteria.push({ id: uid(), name: 'Kriteria baru', question: '', type: 'pos', picks: 1, weights: [1] });
+      V.active.push(P.criteria[P.criteria.length - 1].id);
+      normalize(); touch(); renderInstrumen();
+    });
+    var cl = $('#critList');
+    cl.addEventListener('input', function (e) {
+      var card = e.target.closest('.crit'); if (!card) return;
+      var c = P.criteria[+card.dataset.ci]; if (!c) return;
+      if (e.target.dataset.cf === 'name') { c.name = e.target.value; touch(); }
+      else if (e.target.dataset.cf === 'question') { c.question = e.target.value; touch(); }
+      else if (e.target.dataset.cw != null) { var v = parseFloat(e.target.value); c.weights[+e.target.dataset.cw] = isNaN(v) ? 0 : v; touch(); }
+    });
+    cl.addEventListener('change', function (e) {
+      var card = e.target.closest('.crit'); if (!card) return;
+      var c = P.criteria[+card.dataset.ci]; if (!c) return;
+      var f = e.target.dataset.cf;
+      if (f === 'type') { c.type = e.target.value; c.weights = defWeights(c.picks, c.type); }
+      else if (f === 'picks') { c.picks = +e.target.value; c.weights = defWeights(c.picks, c.type); }
+      if (f === 'type' || f === 'picks') { normalize(); touch(); renderInstrumen(); }
+    });
+    cl.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-act="delCrit"]'); if (!b) return;
+      var i = +b.closest('.crit').dataset.ci;
+      P.criteria.splice(i, 1); normalize(); touch(); renderInstrumen();
+    });
+
+    // data
+    $('#addMember').addEventListener('click', function () {
+      P.members.push({ name: '', gender: '', group: '' }); normalize(); touch(); renderDataTable();
+      var rows = $$('#dataTable tbody tr'); var last = rows[rows.length - 1];
+      if (last) { if (last.scrollIntoView) last.scrollIntoView({ block: 'nearest' }); var inp = last.querySelector('input.nm'); if (inp) inp.focus(); }
+    });
+    $('#togglePaste').addEventListener('click', function () { var b = $('#pasteBox'); b.hidden = !b.hidden; if (!b.hidden) $('#pasteArea').focus(); });
+    $('#applyPaste').addEventListener('click', function () {
+      var t = $('#pasteArea').value; if (!t.trim()) { toast('Tempel tabel dari Excel terlebih dahulu.'); return; }
+      applyTable(parseText(t)); $('#pasteArea').value = ''; $('#pasteBox').hidden = true;
+    });
+    $('#fileData').addEventListener('change', function (e) { if (e.target.files[0]) importFile(e.target.files[0]); e.target.value = ''; });
+    $('#btnTemplate').addEventListener('click', exportTemplate);
+    $('#btnClearMembers').addEventListener('click', function () { P.members = []; P.choices = []; normalize(); touch(); renderDataTable(); });
+    var dt = $('#dataTable');
+    dt.addEventListener('input', function (e) {
+      var tr = e.target.closest('tr'); if (!tr || !tr.dataset.i) return;
+      var i = +tr.dataset.i, f = e.target.dataset.f, m = P.members[i];
+      if (f === 'name') { m.name = e.target.value; refreshNames(); }
+      else if (f === 'gender') m.gender = e.target.value;
+      else if (f === 'group') m.group = e.target.value;
+      else if (f === 'ch') { var arr = P.choices[i][e.target.dataset.c]; arr[+e.target.dataset.k] = e.target.value; }
+      touch(); scheduleIssues();
+    });
+    dt.addEventListener('change', function (e) {
+      var tr = e.target.closest('tr'); if (!tr || !tr.dataset.i) return;
+      if (e.target.dataset.f === 'name') {
+        var oldN = S.norm(e.target.dataset.old), newN = e.target.value.trim();
+        if (oldN && S.norm(newN) !== oldN) {
+          P.choices.forEach(function (o) { P.criteria.forEach(function (c) { (o[c.id] || []).forEach(function (t, k) { if (S.norm(t) === oldN) o[c.id][k] = newN; }); }); });
+          renderDataTable();
+        }
+        else e.target.dataset.old = e.target.value;
+      }
+    });
+    dt.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-act="delMember"]'); if (!b) return;
+      var i = +b.closest('tr').dataset.i;
+      var name = P.members[i].name;
+      P.members.splice(i, 1); P.choices.splice(i, 1);
+      if (name) P.choices.forEach(function (o) { P.criteria.forEach(function (c) { o[c.id] = (o[c.id] || []).map(function (t) { return S.norm(t) === S.norm(name) ? '' : t; }); }); });
+      normalize(); touch(); renderDataTable();
+    });
+
+    // sosiogram
+    $('#controls').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-style]'); if (!b) return;
+      var m = b.dataset.style, keepActive = V.active, seed = V.seed, zh = V.zHigh, zl = V.zLow;
+      var multi = P.criteria.filter(function (c) { return c.type === 'pos' && V.active.indexOf(c.id) >= 0; }).length > 1;
+      Object.assign(V, defaultView(m));
+      if (multi && m === 'target') V.colorBy = 'criterion';
+      V.active = keepActive; V.seed = seed; V.zHigh = zh; V.zLow = zl;
+      dirty = true; persist(); renderControls(); scheduleStage();
+    });
+    $('#controls').addEventListener('change', function (e) {
+      var t = e.target;
+      if (t.dataset.active) {
+        var on = t.checked, id = t.dataset.active;
+        if (on && V.active.indexOf(id) < 0) V.active.push(id);
+        if (!on) { if (V.active.length <= 1) { t.checked = true; toast('Minimal satu kriteria harus aktif.'); return; } V.active = V.active.filter(function (x) { return x !== id; }); }
+        dirty = true; persist(); renderControls(); scheduleStage(); return;
+      }
+      var k = t.dataset.v; if (!k) return;
+      V[k] = t.type === 'checkbox' ? t.checked : t.value;
+      if (k === 'label' || k === 'groupBy') dirty = true;
+      persist();
+      if (k === 'label' || k === 'groupBy') scheduleStage(); else drawStage();
+    });
+    $('#btnRelayout').addEventListener('click', function () { V.seed++; dirty = true; cache.sig = null; persist(); scheduleStage(); });
+    $('#btnPng').addEventListener('click', exportPng);
+    $('#btnSvg').addEventListener('click', exportSvg);
+    bindStage();
+
+    // hasil
+    $('#results').addEventListener('click', function (e) { if (e.target.id === 'btnXlsx') exportExcel(); });
+    $('#results').addEventListener('change', function (e) {
+      if (e.target.id === 'sortSel') { sortMode = e.target.value; renderResults(); }
+      if (e.target.id === 'mxSel') { matrixCrit = e.target.value; renderResults(); }
+    });
+  }
+
+  /* ---------- mulai ---------- */
+  function boot() {
+    V = Object.assign({ zHigh: 1, zLow: -0.5, seed: 1, active: [] }, defaultView('target'));
+    var loaded = false;
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) { var o = JSON.parse(raw); if (o && o.P && o.V) { P = o.P; V = Object.assign(V, o.V); loaded = true; } }
+    } catch (e) { loaded = false; }
+    var kind = 'dua';
+    if (loaded && P.meta && P.meta.sample) { kind = P.meta.sampleKind === 'multi' ? 'multi' : 'dua'; loaded = false; }
+    if (!loaded) {
+      var s = SMP.make(kind);
+      P = { meta: Object.assign({}, s.meta, { sample: true, sampleKind: kind }), criteria: s.criteria, members: s.members, choices: s.choices };
+      V.active = s.criteria.map(function (c) { return c.id; });
+      var multiPos = s.criteria.filter(function (c) { return c.type === 'pos'; }).length > 1;
+      if (multiPos && V.colorBy === 'rank') V.colorBy = 'criterion';
+      if (!multiPos && V.colorBy === 'criterion') V.colorBy = 'rank';
+    }
+    normalize();
+    $('#banner').hidden = !P.meta.sample;
+    updateHeaderLine();
+    bind();
+    show('sosiogram');
+  }
+  boot();
+})();
+</script>
+</body></html>
