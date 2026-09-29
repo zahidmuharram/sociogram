@@ -2,7 +2,7 @@
 
 Aplikasi web untuk mengolah data sosiometri dan menggambar sosiogram dari pilihan antaranggota kelompok. Dirancang untuk asesmen psikologi di setting komunitas, dan dapat juga dipakai di kelas, kelompok pertemanan, dan organisasi.
 
-**Alamat aplikasi:** [tempel tautan GitHub Pages di sini]
+**Alamat aplikasi:** [https://zahidmuharram.github.io/sociogram/]
 
 Aplikasi berjalan sepenuhnya di browser. Tidak ada akun, tidak ada instalasi.
 
