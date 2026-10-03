@@ -4,177 +4,290 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="author" content="Hammad Zahid Muharram, M.Psi., Psikolog">
 <meta name="description" content="Sosiogram: indeks kelompok dan klasifikasi status dari pilihan anggota untuk asesmen psikologi di setting komunitas.">
-<style>:root{color-scheme:light}body{margin:0;background:#f2f4f8;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:light dark}body{margin:0;background:#fbfbfa;font:15px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Sosiogram</title>
+<meta name="theme-color" content="#fbfbfa">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23171717'/%3E%3Ccircle cx='10.5' cy='11' r='4.5' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Crect x='17.5' y='17.5' width='9' height='9' rx='1.5' fill='none' stroke='%23ffffff' stroke-width='2'/%3E%3Cpath d='M14 14.5 L17 17.5' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600;7..72,700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
 <style>
-/* Tata letak: kepala + tab, lalu satu panel aktif. Sosiogram = panel kontrol kiri, kertas gambar kanan.
-   Kertas gambar selalu putih (untuk cetak), sisanya mengikuti tema. */
+/* Tata letak: kepala, tab, lalu satu panel aktif.
+   Gaya: monokrom hangat, garis tipis sebagai pemisah, satu aksen biru hanya untuk fokus dan tautan.
+   Warna kode gambar (merah, hijau, biru) hanya muncul pada gambar sosiogram dan penanda kriteria.
+   Kertas gambar selalu putih (untuk cetak), sisanya mengikuti tema perangkat. */
 :root {
-  --bg: #f2f4f8; --surface: #ffffff; --surface2: #eaeef4; --ink: #1a2030; --muted: #566074; --line: #d3d9e3;
-  --accent: #1d5c8c; --accent-ink: #ffffff; --accent-soft: #dbeaf6;
-  --warn: #8a4b00; --warn-bg: #fcefd6; --bad: #b3261e; --bad-bg: #fbe4e2; --ok: #1b7a3a;
-  --f-display: 'Literata', Georgia, 'Times New Roman', serif;
-  --f-body: 'Public Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --bg: #fbfbfa; --surface: #ffffff; --surface2: #f5f4f0; --ink: #171717; --ink2: #2f3437; --muted: #66645e;
+  --line: #e7e5e0; --line-strong: #918e86;
+  --accent: #1f6c9f; --btn: #171717; --btn-ink: #ffffff; --btn-hover: #3a3a38;
+  --warn: #7a5200; --warn-bg: #fbf3db; --bad: #9f2f2d; --bad-bg: #fdebec; --ok: #346538; --ok-bg: #edf3ec; --info: #1f6c9f; --info-bg: #e1f3fe;
+  --f-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --f-body: 'Geist', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f131a; --surface: #171c25; --surface2: #202735; --ink: #e6eaf2; --muted: #9aa4b7; --line: #2b3343;
-    --accent: #7db4e3; --accent-ink: #0c1620; --accent-soft: #1a2a3a;
-    --warn: #f0bd6a; --warn-bg: #33270f; --bad: #ff9088; --bad-bg: #3a1a18; --ok: #77d492;
+    --bg: #161615; --surface: #1e1e1c; --surface2: #262624; --ink: #f1f0ed; --ink2: #dddbd6; --muted: #aaa8a0;
+    --line: #34332f; --line-strong: #77746c;
+    --accent: #7db8e6; --btn: #f1f0ed; --btn-ink: #161615; --btn-hover: #d6d4cf;
+    --warn: #f0c978; --warn-bg: #352b12; --bad: #ff9d96; --bad-bg: #3b1f1d; --ok: #98d4a0; --ok-bg: #1d2e20; --info: #8cc6f0; --info-bg: #152a3a;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0f131a; --surface: #171c25; --surface2: #202735; --ink: #e6eaf2; --muted: #9aa4b7; --line: #2b3343;
-  --accent: #7db4e3; --accent-ink: #0c1620; --accent-soft: #1a2a3a;
-  --warn: #f0bd6a; --warn-bg: #33270f; --bad: #ff9088; --bad-bg: #3a1a18; --ok: #77d492;
+  --bg: #161615; --surface: #1e1e1c; --surface2: #262624; --ink: #f1f0ed; --ink2: #dddbd6; --muted: #aaa8a0;
+  --line: #34332f; --line-strong: #77746c;
+  --accent: #7db8e6; --btn: #f1f0ed; --btn-ink: #161615; --btn-hover: #d6d4cf;
+  --warn: #f0c978; --warn-bg: #352b12; --bad: #ff9d96; --bad-bg: #3b1f1d; --ok: #98d4a0; --ok-bg: #1d2e20; --info: #8cc6f0; --info-bg: #152a3a;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 14px; line-height: 1.5; padding-inline: 16px; padding-block: 0 40px; }
-h1, h2, h3 { font-family: var(--f-display); margin: 0; font-weight: 700; text-wrap: balance; }
-p { margin: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink2); font-family: var(--f-body); font-size: 15px; line-height: 1.6; padding-inline: 24px; padding-block: 0 48px; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: var(--f-display); margin: 0; font-weight: 600; color: var(--ink); text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
 button, input, select, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.wrap { max-width: 1260px; margin-inline: auto; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 1180px; margin-inline: auto; }
+main:focus { outline: 0; }
 .muted { color: var(--muted); }
+.skip { position: absolute; left: 12px; top: -64px; background: var(--btn); color: var(--btn-ink); padding: 10px 16px; border-radius: 6px; font-weight: 600; text-decoration: none; z-index: 30; }
+.skip:focus { top: 12px; }
 
-.top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; padding-block: 18px 12px; }
-.brand h1 { font-size: 24px; letter-spacing: -0.01em; }
-.brand p { color: var(--muted); font-size: 13px; margin-top: 2px; }
-.top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+/* kepala */
+.top { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: flex-end; justify-content: space-between; padding-block: 36px 24px; }
+.brand h1 { font-size: 34px; line-height: 1.1; letter-spacing: -0.025em; }
+.brand p { color: var(--muted); font-size: 15px; margin-top: 6px; max-width: 52ch; }
+.top-actions { display: flex; flex-wrap: wrap; gap: 12px 28px; }
+.grp { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.grp-l { font-size: 13px; color: var(--muted); margin-right: 2px; }
 
-.btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; cursor: pointer; font-weight: 500; font-size: 13px; line-height: 1.3; }
-.btn:hover { border-color: var(--accent); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.btn.subtle { background: transparent; }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
-.icon { background: none; border: 0; cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 8px; color: var(--muted); border-radius: 4px; }
+/* tombol */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 14px; min-height: 40px; cursor: pointer; font-weight: 500; font-size: 14px; line-height: 1.3; text-align: center; transition: background-color .15s, transform .15s var(--ease); }
+.btn:hover { background: var(--surface2); }
+.btn:active { transform: scale(0.98); }
+.btn.primary { background: var(--btn); color: var(--btn-ink); border-color: var(--btn); }
+.btn.primary:hover { background: var(--btn-hover); border-color: var(--btn-hover); }
+.btn.subtle { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.subtle:hover { background: var(--surface2); color: var(--ink); }
+.btn.sq { min-width: 40px; padding-inline: 0; font-size: 18px; font-weight: 600; }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.icon { background: none; border: 0; cursor: pointer; font-size: 22px; line-height: 1; width: 40px; height: 40px; display: inline-grid; place-items: center; color: var(--muted); border-radius: 6px; transition: background-color .15s, color .15s; }
 .icon:hover { color: var(--bad); background: var(--bad-bg); }
 
-.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 16px; overflow-x: auto; }
-.tabs button { background: none; border: 0; padding: 10px 16px; cursor: pointer; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
-.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+/* tab */
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 8px; overflow-x: auto; scrollbar-width: none; position: sticky; top: 0; z-index: 12; background: var(--bg); }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { background: none; border: 0; padding: 12px 16px; min-height: 48px; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color .15s; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-selected="true"] { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
+.tabs button:focus-visible { outline-offset: -3px; }
+.panel:not([hidden]) { animation: rise .3s var(--ease); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-.banner { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); border-radius: 8px; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin-bottom: 16px; font-size: 13px; }
+.banner { background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; margin-block: 20px 0; font-size: 14px; }
+.banner .btn { background: transparent; border-color: var(--warn); color: var(--warn); }
+.banner .btn:hover { background: rgba(0,0,0,.05); }
 
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; min-width: 0; }
-.card + .card { margin-top: 16px; }
-.card h2 { font-size: 17px; margin-bottom: 4px; }
-.card .lead { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
-.card h3 { font-size: 14px; margin: 16px 0 6px; font-family: var(--f-body); }
-.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px 16px; }
-label.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); min-width: 0; }
-label.f > span.hint { font-weight: 400; }
-input[type=text], input[type=number], select, textarea { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 7px 9px; width: 100%; min-width: 0; color: var(--ink); font-size: 14px; }
-textarea { resize: vertical; }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+/* bagian halaman: judul di kiri, isi di kanan (pada layar lebar) */
+.card { padding-block: 32px; border-top: 1px solid var(--line); min-width: 0; }
+.panel > .card:first-child, #results > .card:first-child { border-top: 0; }
+.card h2 { font-size: 22px; line-height: 1.25; letter-spacing: -0.015em; margin-bottom: 6px; }
+.card .lead { color: var(--muted); font-size: 14.5px; margin-bottom: 20px; max-width: 64ch; }
+.card h3 { font-size: 15px; margin: 24px 0 8px; font-family: var(--f-body); font-weight: 600; letter-spacing: 0; }
+.sec { display: grid; grid-template-columns: minmax(200px, 300px) minmax(0, 1fr); gap: 8px 56px; }
+.sec .lead { margin-bottom: 0; }
+.sec-body { min-width: 0; max-width: 760px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px 24px; }
+.f { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+label.f, .f-l { font-size: 13.5px; font-weight: 600; color: var(--ink2); }
+label.f > span.hint { font-weight: 400; color: var(--muted); font-size: 13px; }
+input[type=text], input[type=number], select, textarea { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 6px; padding: 8px 11px; min-height: 40px; width: 100%; min-width: 0; color: var(--ink); font-size: 15px; font-weight: 400; transition: border-color .15s; }
+select { appearance: none; -webkit-appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 L6 6.5 L11 1.5' fill='none' stroke='%2366645e' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+textarea { resize: vertical; line-height: 1.5; }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: .85; }
+input:hover, select:hover, textarea:hover { border-color: var(--ink2); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; border-color: var(--ink); }
 
-.presets { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
-.crit { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: var(--surface2); }
-.crit + .crit { margin-top: 10px; }
-.crit-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 20px; }
+.presets .btn { font-size: 13.5px; min-height: 36px; padding: 6px 12px; }
+.crit { border: 1px solid var(--line); border-radius: 8px; padding: 18px; background: var(--surface); }
+.crit + .crit { margin-top: 12px; }
+.crit-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .crit-head input { font-weight: 600; }
-.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; display: inline-block; }
-.crit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 14px; margin-bottom: 10px; align-items: end; }
-.wts { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-.wts input { width: 64px; }
-.wts b { font-size: 12px; color: var(--muted); font-weight: 600; }
+.dot { width: 11px; height: 11px; border-radius: 50%; flex: none; display: inline-block; border: 1px solid rgba(0,0,0,.25); }
+.crit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px 18px; margin-bottom: 14px; align-items: end; }
+.wts { display: flex; gap: 6px 8px; align-items: center; flex-wrap: wrap; }
+.wts input { width: 72px; text-align: center; }
+.wts b { font-size: 13px; color: var(--muted); font-weight: 600; }
 
-.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
-.paste { margin-bottom: 12px; }
-.paste textarea { min-height: 120px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center; }
+.paste { margin-bottom: 16px; }
+.paste textarea { min-height: 128px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 13px; }
 .tblwrap { overflow: auto; max-width: 100%; max-height: 70vh; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
-table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
-th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
-th { position: sticky; top: 0; background: var(--surface2); font-size: 12px; z-index: 1; padding: 8px 8px; }
-.dt td input, .dt td select { min-width: 110px; padding: 5px 7px; font-size: 13px; }
-.dt td.no { color: var(--muted); text-align: right; width: 36px; }
-.dt td input.nm { min-width: 140px; font-weight: 600; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { padding: 4px 8px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+th { position: sticky; top: 0; background: var(--surface2); font-size: 13px; font-weight: 600; color: var(--ink2); z-index: 1; padding: 10px 8px; }
+.dt td input, .dt td select { min-width: 120px; padding: 6px 9px; font-size: 14px; min-height: 38px; }
+.dt td.no, .dt th:first-child { text-align: right; width: 44px; min-width: 44px; color: var(--muted); }
+.dt th:first-child, .dt td:first-child { position: sticky; left: 0; z-index: 2; background: var(--surface); }
+.dt th:first-child { background: var(--surface2); z-index: 3; }
+.dt th:nth-child(2), .dt td:nth-child(2) { position: sticky; left: 44px; z-index: 2; background: var(--surface); box-shadow: 1px 0 0 var(--line); }
+.dt th:nth-child(2) { background: var(--surface2); z-index: 3; }
+.dt td input.nm { min-width: 128px; font-weight: 600; }
 .dt td input.bad { border-color: var(--bad); background: var(--bad-bg); }
-.dt td select.jk { min-width: 62px; }
-th.ch .dot { margin-right: 6px; }
-.issues { margin-top: 12px; }
-.issue-box { border: 1px solid var(--warn); background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 10px 14px; font-size: 13px; }
-.issue-box ul { margin: 6px 0 0; padding-left: 18px; }
-.ok-box { color: var(--ok); font-size: 13px; }
+.dt td select.jk { min-width: 72px; }
+th.ch .dot { margin-right: 7px; }
+.issues { margin-top: 16px; }
+.issue-box { background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 12px 16px; font-size: 14px; }
+.issue-box ul { margin: 6px 0 0; padding-left: 20px; }
+.issue-box.act { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.issue-box .btn { background: transparent; border-color: var(--warn); color: var(--warn); min-height: 36px; }
+.ok-box { display: inline-block; background: var(--ok-bg); color: var(--ok); border-radius: 8px; padding: 8px 14px; font-size: 14px; }
 
-.sg { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; }
-.ctl { display: flex; flex-direction: column; gap: 14px; }
-.ctl .card + .card { margin-top: 0; }
+/* panel sosiogram */
+.sg { display: grid; grid-template-columns: 288px minmax(0, 1fr); gap: 40px; align-items: start; padding-top: 24px; }
+.ctlbox { min-width: 0; }
+.ctlbox > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 44px; font-family: var(--f-display); font-size: 20px; font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--line); }
+.ctlbox > summary::-webkit-details-marker { display: none; }
+.ctlbox > summary::after { content: ''; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg) translateY(-2px); transition: transform .2s var(--ease); margin-right: 4px; }
+.ctlbox[open] > summary::after { transform: rotate(-135deg) translateY(-2px); }
+.ctl { display: flex; flex-direction: column; }
+.cs { padding-block: 20px; border-bottom: 1px solid var(--line); }
+.cs:last-child { border-bottom: 0; }
 .ctl fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
-.ctl legend { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 8px; }
-.ctl .row { display: flex; flex-direction: column; gap: 10px; }
-.chk { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; cursor: pointer; }
-.chk input { margin-top: 3px; accent-color: var(--accent); }
-.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.seg button { background: var(--surface2); border: 1px solid var(--line); border-radius: 6px; padding: 8px 6px; cursor: pointer; font-size: 13px; font-weight: 600; text-align: left; line-height: 1.3; }
-.seg button small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
-.seg button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.ctl legend { font-size: 13.5px; font-weight: 600; color: var(--ink); padding: 0; margin-bottom: 12px; }
+.ctl .row { display: flex; flex-direction: column; gap: 14px; }
+.chk { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; cursor: pointer; line-height: 1.45; min-height: 28px; }
+.chk input { margin: 2px 0 0; width: 18px; height: 18px; flex: none; accent-color: var(--btn); }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.seg button { background: var(--surface); border: 1px solid var(--line-strong); border-radius: 6px; padding: 10px 10px; min-height: 56px; cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; line-height: 1.3; color: var(--ink); transition: background-color .15s, transform .15s var(--ease); }
+.seg button:hover { background: var(--surface2); }
+.seg button:active { transform: scale(0.98); }
+.seg button small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.seg button[aria-pressed="true"] { background: var(--btn); border-color: var(--btn); color: var(--btn-ink); }
+.seg button[aria-pressed="true"] small { color: var(--btn-ink); opacity: .78; }
 .stage { min-width: 0; }
-.paper { background: #ffffff; color: #1a2030; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; position: relative; }
+.stagebar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.zoom { display: flex; align-items: center; gap: 6px; }
+.zoom .lbl { min-width: 48px; text-align: center; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.paper { background: #ffffff; color: #1b2130; border: 1px solid var(--line); border-radius: 8px; overflow: auto; position: relative; max-height: 82vh; }
 .paper svg { display: block; width: 100%; height: auto; user-select: none; -webkit-user-select: none; }
-.paper.busy::after { content: 'Menyusun tata letak…'; position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.8); color: #1a2030; font-weight: 600; }
-.paper .empty { padding: 60px 20px; text-align: center; color: #566074; }
-.detail { margin-top: 12px; font-size: 13px; }
-.detail .card { padding: 12px 14px; }
-.cat { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; color: #1a2030; }
-.acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.paper g[data-node]:focus-visible { outline: 3px solid #1f6c9f; outline-offset: 2px; }
+.paper.busy::after { content: 'Menyusun tata letak…'; position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.85); color: #1b2130; font-weight: 600; }
+.paper .empty { padding: 72px 24px; text-align: center; color: #4a5263; }
+.detail { margin-top: 16px; font-size: 14px; }
+.detail:empty { display: none; }
+.detail .card { padding: 16px 18px; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; line-height: 1.6; }
+.detail .card p + p { margin-top: 2px; }
+.cat { display: inline-flex; align-items: center; gap: 6px; padding: 1px 10px 1px 8px; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--ink); background: var(--surface); vertical-align: 1px; }
+.cat::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--c, #d7d7d7); border: 1px solid rgba(0,0,0,.4); }
+.stage .note { margin-top: 12px; }
 
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-.stats div { background: var(--surface); padding: 10px 12px; }
-.stats dt { font-size: 12px; color: var(--muted); }
-.stats dd { margin: 2px 0 0; font-size: 20px; font-weight: 700; font-family: var(--f-display); font-variant-numeric: tabular-nums; }
-.stats dd small { font-size: 12px; font-weight: 500; font-family: var(--f-body); color: var(--muted); }
-.narr p { margin: 0 0 10px; max-width: 75ch; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { border: 1px solid var(--line); border-radius: 14px; padding: 2px 10px; font-size: 12.5px; background: var(--surface2); }
-.rtbl td, .rtbl th { padding: 6px 9px; }
+/* hasil */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px 24px; margin: 0; }
+.stats div { padding: 0; }
+.stats dt { font-size: 13px; color: var(--muted); }
+.stats dd { margin: 2px 0 0; font-size: 30px; line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); font-family: var(--f-display); font-variant-numeric: tabular-nums; }
+.stats dd small { font-size: 13px; font-weight: 400; font-family: var(--f-body); color: var(--muted); letter-spacing: 0; }
+.narr p { margin: 0 0 14px; max-width: 68ch; font-size: 15.5px; line-height: 1.75; color: var(--ink2); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); border-radius: 6px; padding: 3px 10px; font-size: 13.5px; background: var(--surface); }
+.rtbl td, .rtbl th { padding: 9px 12px; }
 .rtbl td.num, .rtbl th.num { text-align: right; }
-.rtbl tbody tr:hover { background: var(--surface2); }
-.mx td, .mx th { padding: 2px 3px; text-align: center; font-size: 11.5px; min-width: 22px; border: 1px solid var(--line); }
-.mx th { position: static; }
+.rtbl tbody tr:hover td { background: var(--surface2); }
+.mx td, .mx th { padding: 3px 4px; text-align: center; font-size: 12.5px; min-width: 26px; border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.mx th { position: sticky; top: 0; background: var(--surface); z-index: 1; }
+.mx thead th:first-child { left: 0; z-index: 3; }
+.mx .rl { position: sticky; left: 0; top: auto; background: var(--surface); z-index: 2; }
 .mx td.self { background: var(--surface2); }
 .mx td.neg { color: var(--bad); font-weight: 700; }
-.mx .rl { text-align: left; white-space: nowrap; padding-inline: 6px; font-weight: 600; }
-.row-between { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
-.note { font-size: 12.5px; color: var(--muted); max-width: 80ch; }
+.mx .rl { text-align: left; white-space: nowrap; padding-inline: 8px; font-weight: 600; }
+.row-between { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+.row-between h2 { margin-bottom: 0; }
+.f.inl { flex-direction: row; align-items: center; gap: 10px; }
+.f.inl select { width: auto; }
+.empty-note { padding: 28px 18px; text-align: center; }
+.note { font-size: 13.5px; color: var(--muted); max-width: 72ch; }
 
-.credit { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 24px; justify-content: space-between; }
+.credit { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 40px; justify-content: space-between; }
 .credit strong { color: var(--ink); font-weight: 600; }
-#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 8px; font-size: 13px; max-width: calc(100vw - 32px); z-index: 10; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.credit p { max-width: 62ch; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--btn); color: var(--btn-ink); padding: 11px 18px; border-radius: 8px; font-size: 14px; max-width: calc(100vw - 32px); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
 #toast.on { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
-@media (max-width: 900px) {
-  .sg { grid-template-columns: minmax(0, 1fr); }
-  .brand h1 { font-size: 21px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  #toast, .btn, .seg button, .ctlbox > summary::after { transition: none; }
+  .panel:not([hidden]) { animation: none; }
 }
+@media (max-width: 900px) {
+  .sg { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-top: 16px; }
+  .sec { grid-template-columns: minmax(0, 1fr); }
+  .sec-body { max-width: none; }
+  .ctlbox > summary { border: 1px solid var(--line-strong); border-radius: 8px; padding-inline: 14px; font-size: 17px; background: var(--surface); }
+  .ctlbox[open] > summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+  .ctl { border: 1px solid var(--line); border-top: 0; border-radius: 0 0 8px 8px; padding-inline: 14px; background: var(--surface); }
+}
+@media (max-width: 640px) {
+  body { padding-inline: 16px; font-size: 15px; }
+  .top { padding-block: 24px 16px; gap: 14px; }
+  .brand h1 { font-size: 28px; }
+  .top-actions { gap: 8px; width: 100%; }
+  .grp { width: 100%; }
+  .grp-l { display: none; }
+  .top-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .grp { display: contents; }
+  .grp .btn { width: 100%; }
+  .btn { min-height: 44px; }
+  .btn.sq { min-width: 44px; }
+  .presets .btn { min-height: 44px; }
+  .tabs { gap: 0; }
+  .tabs button { padding-inline: 8px; font-size: 14px; flex: 1 0 auto; text-align: center; }
+  .card { padding-block: 24px; }
+  .card h2 { font-size: 20px; }
+  .crit { padding: 14px; }
+  input[type=text], input[type=number], select, textarea { font-size: 16px; min-height: 44px; }
+  .dt td input, .dt td select { font-size: 16px; min-height: 44px; min-width: 132px; }
+  .dt td input.nm { min-width: 112px; }
+  .dt th:nth-child(2), .dt td:nth-child(2) { box-shadow: 2px 0 4px -2px rgba(0,0,0,.18); }
+  .stats dd { font-size: 26px; }
+  .stagebar { flex-direction: column; align-items: stretch; }
+  .zoom { justify-content: flex-end; }
+  .credit { margin-top: 40px; }
+}
+@media (max-width: 400px) { .tabs button { font-size: 13.5px; padding-inline: 5px; } }
 </style>
 
 </head><body>
 <div class="wrap">
+  <a class="skip" href="#main">Lompat ke isi halaman</a>
   <header class="top">
     <div class="brand">
       <h1>Sosiogram</h1>
       <p id="ctxLine">Sosiogram, indeks kelompok, dan klasifikasi status dari pilihan anggota.</p>
     </div>
     <div class="top-actions">
-      <button class="btn" id="btnSample2" type="button">Contoh satu kriteria</button>
-      <button class="btn" id="btnSample3" type="button">Contoh lebih dari satu kriteria</button>
-      <button class="btn" id="btnSaveProj" type="button">Simpan proyek</button>
-      <label class="btn" for="fileProject">Buka proyek</label>
-      <input type="file" id="fileProject" accept=".json,application/json" hidden>
+      <div class="grp" role="group" aria-label="Contoh data">
+        <span class="grp-l">Coba dengan</span>
+        <button class="btn" id="btnSample2" type="button">Contoh 1 kriteria</button>
+        <button class="btn" id="btnSample3" type="button">Contoh lebih dari satu kriteria</button>
+      </div>
+      <div class="grp" role="group" aria-label="Berkas proyek">
+        <span class="grp-l">Proyek</span>
+        <button class="btn" id="btnSaveProj" type="button">Simpan proyek</button>
+        <label class="btn" for="fileProject">Buka proyek</label>
+        <input type="file" id="fileProject" accept=".json,application/json" hidden>
+      </div>
     </div>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Bagian aplikasi">
-    <button type="button" role="tab" data-tab="instrumen" aria-selected="false">1. Instrumen</button>
-    <button type="button" role="tab" data-tab="data" aria-selected="false">2. Data</button>
-    <button type="button" role="tab" data-tab="sosiogram" aria-selected="true">3. Sosiogram</button>
-    <button type="button" role="tab" data-tab="hasil" aria-selected="false">4. Hasil</button>
+    <button type="button" role="tab" id="tab-instrumen" data-tab="instrumen" aria-controls="p-instrumen" aria-selected="false" tabindex="-1">1. Instrumen</button>
+    <button type="button" role="tab" id="tab-data" data-tab="data" aria-controls="p-data" aria-selected="false" tabindex="-1">2. Data</button>
+    <button type="button" role="tab" id="tab-sosiogram" data-tab="sosiogram" aria-controls="p-sosiogram" aria-selected="true" tabindex="0">3. Sosiogram</button>
+    <button type="button" role="tab" id="tab-hasil" data-tab="hasil" aria-controls="p-hasil" aria-selected="false" tabindex="-1">4. Hasil</button>
   </nav>
 
   <div id="banner" class="banner" hidden>
@@ -182,63 +295,76 @@ th.ch .dot { margin-right: 6px; }
     <button class="btn" id="btnClear" type="button">Kosongkan dan gunakan data sendiri</button>
   </div>
 
+  <main id="main" tabindex="-1">
   <!-- ===== Instrumen ===== -->
-  <section class="panel" id="p-instrumen" hidden>
-    <div class="card">
-      <h2>Kegiatan</h2>
-      <p class="lead">Judul muncul di sosiogram. Konteks menentukan istilah, label kolom grup, dan catatan pada hasil.</p>
-      <div class="grid2">
-        <label class="f">Judul
-          <input type="text" id="title" placeholder="mis. Karang Taruna RW 05, September 2026">
-        </label>
-        <label class="f">Penanggung jawab data
-          <input type="text" id="owner" placeholder="Nama pengambil data" autocomplete="name">
-          <span class="hint">Tercetak pada gambar dan Excel hasil ekspor.</span>
-        </label>
-        <label class="f">Konteks pemakaian
-          <select id="context">
-            <option value="informal">Kelompok pertemanan</option>
-            <option value="ormas">Organisasi masyarakat (Karang Taruna, PKK, kelompok tani, kader)</option>
-            <option value="warga">Warga satu lingkungan (RT, RW, dusun)</option>
-            <option value="dampingan">Kelompok dampingan atau layanan (sebaya, dukungan, binaan)</option>
-            <option value="organisasi">Organisasi (kerja atau kampus)</option>
-            <option value="kelas">Kelas atau pelatihan</option>
-          </select>
-        </label>
+  <section class="panel" id="p-instrumen" role="tabpanel" aria-labelledby="tab-instrumen" hidden>
+    <div class="card sec">
+      <div>
+        <h2>Kegiatan</h2>
+        <p class="lead">Judul muncul di sosiogram. Konteks menentukan istilah, label kolom grup, dan catatan pada hasil.</p>
+      </div>
+      <div class="sec-body">
+        <div class="grid2">
+          <label class="f">Judul
+            <input type="text" id="title" placeholder="mis. Karang Taruna RW 05, September 2026">
+          </label>
+          <label class="f">Penanggung jawab data
+            <input type="text" id="owner" placeholder="Nama pengambil data" autocomplete="name">
+            <span class="hint">Tercetak pada gambar dan Excel hasil ekspor.</span>
+          </label>
+          <label class="f" style="grid-column: 1 / -1">Konteks pemakaian
+            <select id="context">
+              <option value="informal">Kelompok pertemanan</option>
+              <option value="ormas">Organisasi masyarakat (Karang Taruna, PKK, kelompok tani, kader)</option>
+              <option value="warga">Warga satu lingkungan (RT, RW, dusun)</option>
+              <option value="dampingan">Kelompok dampingan atau layanan (sebaya, dukungan, binaan)</option>
+              <option value="organisasi">Organisasi (kerja atau kampus)</option>
+              <option value="kelas">Kelas atau pelatihan</option>
+            </select>
+          </label>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Kriteria pilihan</h2>
-      <p class="lead">Setiap kriteria adalah satu pertanyaan sosiometrik. Maksimal 4 kriteria, masing-masing 1 sampai 3 pilihan. Kriteria negatif (menolak) tidak masuk skor status, tetapi dipakai untuk klasifikasi Coie.</p>
-      <div class="presets">
-        <button class="btn" type="button" data-preset="satu">Satu kriteria, 2 pilihan</button>
-        <button class="btn" type="button" data-preset="tiga">Tiga kriteria (dekat, kerja sama, tempat bertanya)</button>
-        <button class="btn" type="button" data-preset="komunitas">Komunitas (bantuan, kepemimpinan, musyawarah)</button>
-        <button class="btn" type="button" data-preset="tolak">Memilih dan menolak</button>
+    <div class="card sec">
+      <div>
+        <h2>Kriteria pilihan</h2>
+        <p class="lead">Setiap kriteria adalah satu pertanyaan sosiometrik. Maksimal 4 kriteria, masing-masing 1 sampai 3 pilihan. Kriteria negatif (menolak) tidak masuk skor status, tetapi dipakai untuk klasifikasi Coie.</p>
       </div>
-      <div id="critList"></div>
-      <div class="acts"><button class="btn" id="addCrit" type="button">Tambah kriteria</button></div>
+      <div class="sec-body">
+        <div class="presets" role="group" aria-label="Susunan kriteria siap pakai">
+          <button class="btn" type="button" data-preset="satu">Satu kriteria, 2 pilihan</button>
+          <button class="btn" type="button" data-preset="tiga">Tiga kriteria (dekat, kerja sama, tempat bertanya)</button>
+          <button class="btn" type="button" data-preset="komunitas">Komunitas (bantuan, kepemimpinan, musyawarah)</button>
+          <button class="btn" type="button" data-preset="tolak">Memilih dan menolak</button>
+        </div>
+        <div id="critList"></div>
+        <div class="acts" style="margin-top:14px"><button class="btn" id="addCrit" type="button">Tambah kriteria</button></div>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Kategori status</h2>
-      <p class="lead">Skor status adalah jumlah pilihan yang diterima dikali bobot peringkat. Kategori ditentukan dari skor baku (z) terhadap rata-rata kelompok. Skor nol selalu berarti isolat.</p>
-      <div class="grid2">
-        <label class="f">Batas populer (z ≥)
-          <input type="number" id="zHigh" step="0.1" min="0" max="3">
-          <span class="hint">Standar 1,0 SD di atas rata-rata.</span>
-        </label>
-        <label class="f">Batas terabaikan (z ≤)
-          <input type="number" id="zLow" step="0.1" min="-3" max="0">
-          <span class="hint">Standar −0,5 hingga −1,0 SD. Di antara dua batas: rata-rata.</span>
-        </label>
+    <div class="card sec">
+      <div>
+        <h2>Kategori status</h2>
+        <p class="lead">Skor status adalah jumlah pilihan yang diterima dikali bobot peringkat. Kategori ditentukan dari skor baku (z) terhadap rata-rata kelompok. Skor nol selalu berarti isolat.</p>
+      </div>
+      <div class="sec-body">
+        <div class="grid2">
+          <label class="f">Batas populer (z ≥)
+            <input type="number" id="zHigh" step="0.1" min="0" max="3">
+            <span class="hint">Standar 1,0 SD di atas rata-rata.</span>
+          </label>
+          <label class="f">Batas terabaikan (z ≤)
+            <input type="number" id="zLow" step="0.1" min="-3" max="0">
+            <span class="hint">Standar −0,5 hingga −1,0 SD. Di antara dua batas: rata-rata.</span>
+          </label>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== Data ===== -->
-  <section class="panel" id="p-data" hidden>
+  <section class="panel" id="p-data" role="tabpanel" aria-labelledby="tab-data" hidden>
     <div class="card">
       <h2>Data pilihan</h2>
       <p class="lead">Satu baris per anggota. Kolom pilihan diisi nama (atau nomor urut) anggota yang dipilih. Nama tidak perlu ditulis lengkap selama tidak ambigu.</p>
@@ -251,9 +377,9 @@ th.ch .dot { margin-right: 6px; }
         <button class="btn subtle" id="btnClearMembers" type="button">Kosongkan tabel</button>
       </div>
       <div class="paste" id="pasteBox" hidden>
-        <p class="note" id="pasteHint" style="margin-bottom:6px"></p>
+        <p class="note" id="pasteHint" style="margin-bottom:8px"></p>
         <textarea id="pasteArea" spellcheck="false" aria-label="Tempel tabel dari Excel"></textarea>
-        <div class="acts"><button class="btn primary" id="applyPaste" type="button">Terapkan</button></div>
+        <div class="acts" style="margin-top:10px"><button class="btn primary" id="applyPaste" type="button">Terapkan</button></div>
       </div>
       <div class="tblwrap"><div id="dataTable"></div></div>
       <div class="issues" id="issues"></div>
@@ -262,29 +388,41 @@ th.ch .dot { margin-right: 6px; }
   </section>
 
   <!-- ===== Sosiogram ===== -->
-  <section class="panel" id="p-sosiogram">
+  <section class="panel" id="p-sosiogram" role="tabpanel" aria-labelledby="tab-sosiogram">
     <div class="sg">
-      <aside class="ctl" id="controls" aria-label="Pengaturan tampilan"></aside>
+      <details class="ctlbox" id="ctlBox" open>
+        <summary>Pengaturan tampilan</summary>
+        <div class="ctl" id="controls"></div>
+      </details>
       <div class="stage">
-        <div class="paper" id="paper"></div>
-        <div class="detail" id="detail"></div>
-        <div class="acts">
-          <button class="btn primary" id="btnPng" type="button">Unduh PNG</button>
-          <button class="btn" id="btnSvg" type="button">Unduh SVG</button>
-          <button class="btn" id="btnRelayout" type="button">Acak ulang tata letak</button>
+        <div class="stagebar">
+          <div class="acts">
+            <button class="btn primary" id="btnPng" type="button">Unduh PNG</button>
+            <button class="btn" id="btnSvg" type="button">Unduh SVG</button>
+            <button class="btn subtle" id="btnRelayout" type="button">Acak ulang tata letak</button>
+          </div>
+          <div class="zoom" role="group" aria-label="Ukuran gambar">
+            <button class="btn sq" id="zoomOut" type="button" aria-label="Perkecil gambar">−</button>
+            <span class="lbl" id="zoomLbl" aria-live="polite">100%</span>
+            <button class="btn sq" id="zoomIn" type="button" aria-label="Perbesar gambar">+</button>
+            <button class="btn subtle" id="zoomFit" type="button">Pas layar</button>
+          </div>
         </div>
-        <p class="issue-box" id="ownerHint" style="margin-top:12px" hidden>Nama penanggung jawab data belum diisi, sehingga gambar hasil ekspor akan bertanda “(belum diisi)”. <button class="btn" type="button" data-goto="instrumen">Isi di tab Instrumen</button></p>
-        <p class="note" style="margin-top:10px">Klik simpul untuk menyorot pilihannya, seret untuk memindahkan. Di model target, posisi sudut dan jarak dalam satu cincin tidak bermakna. Yang bermakna adalah cincinnya.</p>
+        <div class="paper" id="paper"></div>
+        <div class="detail" id="detail" aria-live="polite"></div>
+        <p class="issue-box act" id="ownerHint" style="margin-top:16px" hidden>Nama penanggung jawab data belum diisi, sehingga gambar hasil ekspor akan bertanda “(belum diisi)”. <button class="btn" type="button" data-goto="instrumen">Isi di tab Instrumen</button></p>
+        <p class="note">Klik simpul untuk menyorot pilihannya, seret untuk memindahkan. Di model target, posisi sudut dan jarak dalam satu cincin tidak bermakna. Yang bermakna adalah cincinnya. Pakai tombol + dan − untuk memperbesar gambar, lalu geser untuk melihat bagian lain.</p>
       </div>
     </div>
   </section>
 
   <!-- ===== Hasil ===== -->
-  <section class="panel" id="p-hasil" hidden>
+  <section class="panel" id="p-hasil" role="tabpanel" aria-labelledby="tab-hasil" hidden>
     <div id="results"></div>
   </section>
+  </main>
   <footer class="credit">
-    <p>Sosiogram, dikembangkan oleh <strong>Hammad Zahid Muharram, M.Psi., Psikolog</strong></p>
+    <p>Dikembangkan oleh <strong>Hammad Zahid Muharram, M.Psi., Psikolog</strong></p>
     <p>Data diproses di browser ini dan tidak dikirim ke server. Hasil adalah bahan awal asesmen dan perlu dilengkapi observasi dan wawancara.</p>
   </footer>
 </div>
@@ -322,12 +460,15 @@ th.ch .dot { margin-right: 6px; }
   var CATS = ['bintang', 'rata', 'abai', 'isolat'];
   var CAT_LABEL = { bintang: 'Populer', rata: 'Rata-rata', abai: 'Terabaikan', isolat: 'Isolat' };
   var CAT_FILL = { bintang: '#f4c542', rata: '#cfe2f5', abai: '#f2cdbd', isolat: '#d7d7d7' };
-  var RANK_COLOR = { 1: '#e2343b', 2: '#17963f', 3: '#2668d0' };
-  var CRIT_COLOR = ['#d6303b', '#17963f', '#2668d0', '#c07a08'];
-  var MUTUAL_COLOR = '#1f78c8', ONEWAY_COLOR = '#2b2f38', NEG_COLOR = '#8a3fb0';
+  var RANK_COLOR = { 1: '#c4262e', 2: '#14803a', 3: '#2459b8' };
+  /* Pola garis per peringkat: peringkat 1 utuh, 2 putus-putus, 3 titik. Pola ini membuat merah dan hijau tetap terbaca walau gambar dicetak hitam putih. */
+  function rankDash(r) { return r === 1 ? '' : (r === 2 ? '8 5' : '2.5 4'); }
+  var CRIT_COLOR = ['#c4262e', '#14803a', '#2459b8', '#a85f00'];
+  var MUTUAL_COLOR = '#1d5fae', ONEWAY_COLOR = '#2b2f38', NEG_COLOR = '#7a3a9c';
   var GROUP_FILL = ['#dbe9d3', '#e2dcf6', '#fbe3c4', '#d0e8ef', '#f3d5dc', '#e8e6c3', '#d9d9ee', '#cfe6d8'];
   var GENDER_FILL = { L: '#d7ebd0', P: '#dedbf7', '': '#ececec' };
   var FONT = 'Arial, Helvetica, sans-serif';
+  var INK = '#1b2130', INK2 = '#4a5263';
 
   /* ---------- pembacaan nama pilihan ---------- */
   function buildIndex(members) {
@@ -523,6 +664,30 @@ th.ch .dot { margin-right: 6px; }
       });
       return { observed: same / tot, expected: n ? exp / n : null, n: tot };
     };
+    // perkiraan pasangan timbal balik bila setiap anggota memilih acak (jumlah pilihan tiap orang tetap)
+    var pcs = crits.filter(function (c) { return c.type === 'pos'; });
+    var outCnt = {}, expByCrit = {}, expectedMutual = null;
+    pcs.forEach(function (c) { outCnt[c.id] = new Array(N).fill(0); expByCrit[c.id] = 0; });
+    pos.forEach(function (e) { if (outCnt[e.c]) outCnt[e.c][e.from]++; });
+    if (N >= 3 && pcs.length) {
+      var den = (N - 1) * (N - 1);
+      expectedMutual = 0;
+      for (var x = 0; x < N; x++) {
+        for (var y = x + 1; y < N; y++) {
+          var none = 1;
+          for (var q = 0; q < pcs.length; q++) {
+            var pr = outCnt[pcs[q].id][x] * outCnt[pcs[q].id][y] / den;
+            expByCrit[pcs[q].id] += pr;
+            none *= (1 - pr);
+          }
+          expectedMutual += 1 - none;
+        }
+      }
+    }
+    // konsentrasi pilihan pada 20% anggota teratas
+    var topN = Math.max(1, Math.round(N * 0.2));
+    var topSum = ms.map(function (m) { return m.recvN; }).sort(function (a, b) { return b - a; })
+      .slice(0, topN).reduce(function (a, b) { return a + b; }, 0);
     var possiblePairs = N * (N - 1) / 2;
     var summary = {
       N: N, nPos: pos.length, nNeg: neg.length,
@@ -533,6 +698,7 @@ th.ch .dot { margin-right: 6px; }
       density: N > 1 ? pos.length / (N * (N - 1)) : 0,
       avgReceived: N ? pos.length / N : 0,
       cliques: cliques.length,
+      expectedMutual: expectedMutual, topN: topN, topShare: pos.length ? topSum / pos.length : 0,
       gender: hasGender ? sameShare('gender') : null,
       group: hasGroup ? sameShare('group') : null,
       starShare: 0
@@ -551,6 +717,7 @@ th.ch .dot { margin-right: 6px; }
       es.forEach(function (e) { recvAll[e.to]++; });
       return {
         crit: c, edges: es.length, mutualPairs: mut / 2,
+        expectedMutual: c.type === 'pos' && N >= 3 ? expByCrit[c.id] : null,
         isolates: recvAll.filter(function (x) { return x === 0; }).length,
         top: ms.map(function (m, i) { return { m: m, n: recvAll[i] }; })
           .sort(function (x, y) { return y.n - x.n; }).slice(0, 3)
@@ -571,12 +738,12 @@ th.ch .dot { margin-right: 6px; }
     var g = m.gender;
     if (label === 'nama') {
       var txt = m.name;
-      var w = Math.max(46, txt.length * 6.3 + 20);
-      if (g === 'P') return { kind: 'rect', hw: w / 2, hh: 13, rx: 5 };
-      if (g === 'L') return { kind: 'ellipse', hw: w / 2 * 1.08, hh: 15 };
-      return { kind: 'rect', hw: w / 2, hh: 13, rx: 13 };
+      var w = Math.max(50, txt.length * 6.9 + 22);
+      if (g === 'P') return { kind: 'rect', hw: w / 2, hh: 14, rx: 5 };
+      if (g === 'L') return { kind: 'ellipse', hw: w / 2 * 1.08, hh: 16 };
+      return { kind: 'rect', hw: w / 2, hh: 14, rx: 14 };
     }
-    var r = String(m.no).length >= 3 ? 13.5 : 11.5;
+    var r = String(m.no).length >= 3 ? 14.5 : 12.5;
     if (g === 'P') return { kind: 'rect', hw: r, hh: r, rx: 1.5 };
     if (g === 'L') return { kind: 'ellipse', hw: r, hh: r };
     return { kind: 'diamond', hw: r + 3, hh: r + 3 };
@@ -712,7 +879,7 @@ th.ch .dot { margin-right: 6px; }
   /* ---------- tata letak: jaringan ---------- */
   function layoutNetwork(an, view, seed) {
     var W = CANVAS.W, H = CANVAS.H, rnd = mulberry32((seed || 1) * 7919);
-    var N = an.N, area = { x0: 40, x1: 770, y0: 56, y1: 650 };
+    var N = an.N, area = { x0: 40, x1: 725, y0: 70, y1: 640 };
     var geoms = an.members.map(function (m) { return nodeGeom(m, view); });
     var keyOf = function (m) {
       if (view.groupBy === 'gender') return m.gender || '?';
@@ -846,9 +1013,9 @@ th.ch .dot { margin-right: 6px; }
       var dash = '';
       if (l.type === 'neg') dash = '1.5 4';
       else if (view.dashBy === 'mutual') dash = l.mutual ? '' : '6 4';
-      else if (view.dashBy === 'rank') dash = l.rank === 1 ? '' : (l.rank === 2 ? '7 4' : '9 3 2 3');
+      else if (view.dashBy === 'rank') dash = rankDash(l.rank);
       l.color = color; l.dash = dash;
-      l.width = l.type === 'neg' ? 1.4 : (view.widthByRank ? (l.rank === 1 ? 2.1 : l.rank === 2 ? 1.6 : 1.2) : 1.7);
+      l.width = l.type === 'neg' ? 1.6 : (view.widthByRank ? (l.rank === 1 ? 2.6 : l.rank === 2 ? 2.1 : 1.7) : 2.1);
     });
     lines.sort(function (x, y) {
       var nx = x.type === 'neg' ? 9 : 0, ny = y.type === 'neg' ? 9 : 0;
@@ -888,83 +1055,19 @@ th.ch .dot { margin-right: 6px; }
     var lines = buildLines(an, view);
     var groupList = Array.from(new Set(an.members.map(function (m) { return m.group || ''; }))).sort();
     var out = [];
-    out.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" font-family="' + FONT + '">');
-    var colors = new Set(lines.map(function (l) { return l.color; }));
-    out.push('<defs>');
-    colors.forEach(function (c) {
-      out.push('<marker id="ar' + c.slice(1) + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0.8 L10,5 L0,9.2 z" fill="' + c + '"/></marker>');
-    });
-    out.push('</defs>');
-    out.push('<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>');
-    if (title) out.push('<text x="22" y="30" font-size="16" font-weight="700" fill="#1b2130">' + esc(title) + '</text>');
-    if (opts.subtitle) out.push('<text x="22" y="48" font-size="11.5" fill="#5d6678">' + esc(opts.subtitle) + '</text>');
 
-    if (layout.model === 'target') {
-      for (var k = layout.radii.length - 1; k >= 0; k--) {
-        out.push('<circle cx="' + layout.cx + '" cy="' + layout.cy + '" r="' + layout.radii[k].toFixed(1) + '" fill="' + (k === 0 ? '#f7f9fc' : 'none') + '" stroke="#8b93a1" stroke-width="1"/>');
-      }
-    }
-
-    // garis
-    var pairCount = new Map(), pairIdx = new Map();
-    lines.forEach(function (l) {
-      var key = Math.min(l.a, l.b) + '|' + Math.max(l.a, l.b);
-      pairCount.set(key, (pairCount.get(key) || 0) + 1);
-    });
-    lines.forEach(function (l) {
-      var key = Math.min(l.a, l.b) + '|' + Math.max(l.a, l.b);
-      var idx = pairIdx.get(key) || 0; pairIdx.set(key, idx + 1);
-      var n = pairCount.get(key);
-      var u = Math.min(l.a, l.b), v = Math.max(l.a, l.b);
-      var cdx = pos[v].x - pos[u].x, cdy = pos[v].y - pos[u].y, cl = Math.hypot(cdx, cdy) || 1;
-      var px = -cdy / cl, py = cdx / cl;
-      var off = (idx - (n - 1) / 2) * 3.4;
-      var dx = pos[l.b].x - pos[l.a].x, dy = pos[l.b].y - pos[l.a].y, L = Math.hypot(dx, dy) || 1;
-      var d1 = boundaryDist(geoms[l.a], dx, dy) + 1.5, d2 = boundaryDist(geoms[l.b], -dx, -dy) + 1.5;
-      if (L <= d1 + d2 + 4) return;
-      var x1 = pos[l.a].x + dx / L * d1 + px * off, y1 = pos[l.a].y + dy / L * d1 + py * off;
-      var x2 = pos[l.b].x - dx / L * d2 + px * off, y2 = pos[l.b].y - dy / L * d2 + py * off;
-      var dim = focus != null && l.a !== focus && l.b !== focus;
-      var mk = 'url(#ar' + l.color.slice(1) + ')';
-      out.push('<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + l.color + '" stroke-width="' + l.width + '"' +
-        (l.dash ? ' stroke-dasharray="' + l.dash + '"' : '') + ' stroke-linecap="' + (l.type === 'neg' ? 'round' : 'butt') + '" marker-end="' + mk + '"' + (l.both ? ' marker-start="' + mk + '"' : '') +
-        (dim ? ' opacity="0.08"' : ' opacity="0.92"') + '/>');
-    });
-
-    // simpul
-    var neigh = null;
-    if (focus != null) {
-      neigh = new Set([focus]);
-      an.actEdges.forEach(function (e) { if (e.from === focus) neigh.add(e.to); if (e.to === focus) neigh.add(e.from); });
-    }
-    an.members.forEach(function (m, i) {
-      var p = pos[i], g = geoms[i];
-      var dim = neigh && !neigh.has(i);
-      var sel = focus === i;
-      out.push('<g data-node="' + i + '" style="cursor:grab;touch-action:none" opacity="' + (dim ? 0.3 : 1) + '">');
-      out.push(shapeSVG(g, p.x, p.y, nodeFill(m, view, groupList), sel ? '#000' : '#2b2f38', sel ? 2.4 : 1.2));
-      var label = view.label === 'nama' ? m.name : String(m.no);
-      var fs = view.label === 'nama' ? 11 : 11;
-      out.push('<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" dy="0.35em" text-anchor="middle" font-size="' + fs + '" fill="#1b2130" font-weight="' + (view.label === 'nama' ? 600 : 500) + '" style="pointer-events:none">' + esc(label) + '</text>');
-      if (view.label === 'nomor+nama') {
-        var ty = (p.y + g.hh + 11).toFixed(1), tx = p.x.toFixed(1);
-        out.push('<text x="' + tx + '" y="' + ty + '" text-anchor="middle" font-size="10" fill="none" stroke="#ffffff" stroke-width="3.2" stroke-linejoin="round" style="pointer-events:none">' + esc(m.name) + '</text>');
-        out.push('<text x="' + tx + '" y="' + ty + '" text-anchor="middle" font-size="10" fill="#1b2130" style="pointer-events:none">' + esc(m.name) + '</text>');
-      }
-      out.push('</g>');
-    });
-
-    // legenda
+    // ---- isi legenda (disusun dulu supaya penanda panah untuk semua warna legenda ikut dibuat)
     var rows = [];
     var hasG = function (g) { return an.members.some(function (m) { return m.gender === g; }); };
-    if (hasG('L')) rows.push({ t: 'shape', g: { kind: 'ellipse', hw: 7, hh: 7 }, label: 'Laki-laki' });
-    if (hasG('P')) rows.push({ t: 'shape', g: { kind: 'rect', hw: 7, hh: 7, rx: 1 }, label: 'Perempuan' });
-    if (hasG('')) rows.push({ t: 'shape', g: { kind: 'diamond', hw: 8, hh: 8 }, label: 'Tidak dicatat' });
+    if (hasG('L')) rows.push({ t: 'shape', g: { kind: 'ellipse', hw: 8, hh: 8 }, label: 'Laki-laki' });
+    if (hasG('P')) rows.push({ t: 'shape', g: { kind: 'rect', hw: 8, hh: 8, rx: 1.5 }, label: 'Perempuan' });
+    if (hasG('')) rows.push({ t: 'shape', g: { kind: 'diamond', hw: 9, hh: 9 }, label: 'Tidak dicatat' });
     var shown = new Set(lines.map(function (l) { return l.type === 'neg' ? 'neg' : 'pos'; }));
     var posLines = lines.filter(function (l) { return l.type !== 'neg'; });
+    var RANK_NAME = { 1: 'merah', 2: 'hijau', 3: 'biru' };
     if (view.colorBy === 'rank') {
       var rk = Array.from(new Set(posLines.map(function (l) { return l.rank; }))).sort();
-      rk.forEach(function (r) { rows.push({ t: 'line', color: RANK_COLOR[r] || RANK_COLOR[3], dash: view.dashBy === 'rank' ? (r === 1 ? '' : r === 2 ? '7 4' : '9 3 2 3') : '', label: 'Pilihan ' + r, both: false }); });
+      rk.forEach(function (r) { rows.push({ t: 'line', color: RANK_COLOR[r] || RANK_COLOR[3], dash: view.dashBy === 'rank' ? rankDash(r) : '', label: 'Pilihan ' + r + ' (' + (RANK_NAME[r] || RANK_NAME[3]) + ')', both: false }); });
     } else if (view.colorBy === 'criterion') {
       an.crits.forEach(function (c) {
         if (c.type !== 'pos') return;
@@ -976,8 +1079,8 @@ th.ch .dot { margin-right: 6px; }
       rows.push({ t: 'line', color: ONEWAY_COLOR, dash: view.dashBy === 'mutual' ? '6 4' : '', label: 'Satu arah', both: false });
     }
     if (view.dashBy === 'mutual' && view.colorBy !== 'mutual') {
-      rows.push({ t: 'line', color: '#555', dash: '', label: 'Utuh = timbal balik', both: false, plain: true });
-      rows.push({ t: 'line', color: '#555', dash: '6 4', label: 'Putus = satu arah', both: false, plain: true });
+      rows.push({ t: 'line', color: '#555555', dash: '', label: 'Utuh = timbal balik', both: false, plain: true });
+      rows.push({ t: 'line', color: '#555555', dash: '6 4', label: 'Putus = satu arah', both: false, plain: true });
     }
     if (view.colorBy !== 'criterion' && an.crits.length) {
       rows.push({ t: 'head', label: 'Kriteria' });
@@ -996,43 +1099,130 @@ th.ch .dot { margin-right: 6px; }
       rows.push({ t: 'head', label: 'Cincin (dari pusat)' });
       CATS.forEach(function (k, i) { rows.push({ t: 'ring', fill: view.nodeFill === 'kategori' ? CAT_FILL[k] : 'none', label: CAT_LABEL[k] + ' (' + layout.counts[i] + ')' }); });
     }
-    var lx = W - 228, ly = 52, rowH = 22, lh = rows.length * rowH + 14;
-    out.push('<rect x="' + lx + '" y="12" width="216" height="30" rx="3" fill="none" stroke="#b3261e" stroke-width="1.8"/>');
-    out.push('<text x="' + (lx + 108) + '" y="33" text-anchor="middle" font-size="16" font-weight="700" letter-spacing="5" fill="#b3261e">RAHASIA</text>');
-    out.push('<rect x="' + lx + '" y="' + ly + '" width="216" height="' + lh + '" fill="#fff" stroke="#c4c9d2" rx="3"/>');
+
+    var subtitle = opts.subtitle || '';
+    out.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" font-family="' + FONT + '" role="img" aria-label="' + esc('Sosiogram' + (title ? ': ' + title : '') + (subtitle ? ', ' + subtitle : '')) + '">');
+    out.push('<title>' + esc('Sosiogram' + (title ? ': ' + title : '')) + '</title>');
+    var colors = new Set(lines.map(function (l) { return l.color; }));
+    rows.forEach(function (r) { if (r.t === 'line' && !r.plain) colors.add(r.color); });
+    out.push('<defs>');
+    colors.forEach(function (c) {
+      out.push('<marker id="ar' + c.slice(1) + '" viewBox="0 0 10 10" refX="9.2" refY="5" markerWidth="10.5" markerHeight="10.5" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0.6 L10,5 L0,9.4 z" fill="' + c + '"/></marker>');
+    });
+    out.push('</defs>');
+    out.push('<rect width="' + W + '" height="' + H + '" fill="#ffffff"/>');
+    if (title) out.push('<text x="24" y="34" font-size="19" font-weight="700" fill="' + INK + '">' + esc(title) + '</text>');
+    if (subtitle) out.push('<text x="24" y="54" font-size="13" fill="' + INK2 + '">' + esc(subtitle) + '</text>');
+
+    if (layout.model === 'target') {
+      for (var k = layout.radii.length - 1; k >= 0; k--) {
+        out.push('<circle cx="' + layout.cx + '" cy="' + layout.cy + '" r="' + layout.radii[k].toFixed(1) + '" fill="' + (k === 0 ? '#f5f6f8' : 'none') + '" stroke="#a3aab7" stroke-width="1"/>');
+      }
+    }
+
+    // garis
+    var pairCount = new Map(), pairIdx = new Map();
+    lines.forEach(function (l) {
+      var key = Math.min(l.a, l.b) + '|' + Math.max(l.a, l.b);
+      pairCount.set(key, (pairCount.get(key) || 0) + 1);
+    });
+    lines.forEach(function (l) {
+      var key = Math.min(l.a, l.b) + '|' + Math.max(l.a, l.b);
+      var idx = pairIdx.get(key) || 0; pairIdx.set(key, idx + 1);
+      var n = pairCount.get(key);
+      var u = Math.min(l.a, l.b), v = Math.max(l.a, l.b);
+      var cdx = pos[v].x - pos[u].x, cdy = pos[v].y - pos[u].y, cl = Math.hypot(cdx, cdy) || 1;
+      var px = -cdy / cl, py = cdx / cl;
+      var off = (idx - (n - 1) / 2) * 3.8;
+      var dx = pos[l.b].x - pos[l.a].x, dy = pos[l.b].y - pos[l.a].y, L = Math.hypot(dx, dy) || 1;
+      var d1 = boundaryDist(geoms[l.a], dx, dy) + 1.5, d2 = boundaryDist(geoms[l.b], -dx, -dy) + 1.5;
+      if (L <= d1 + d2 + 4) return;
+      var x1 = pos[l.a].x + dx / L * d1 + px * off, y1 = pos[l.a].y + dy / L * d1 + py * off;
+      var x2 = pos[l.b].x - dx / L * d2 + px * off, y2 = pos[l.b].y - dy / L * d2 + py * off;
+      var dim = focus != null && l.a !== focus && l.b !== focus;
+      var mk = 'url(#ar' + l.color.slice(1) + ')';
+      out.push('<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + l.color + '" stroke-width="' + l.width + '"' +
+        (l.dash ? ' stroke-dasharray="' + l.dash + '"' : '') + ' stroke-linecap="' + (l.type === 'neg' ? 'round' : 'butt') + '" marker-end="' + mk + '"' + (l.both ? ' marker-start="' + mk + '"' : '') +
+        (dim ? ' opacity="0.1"' : ' opacity="0.94"') + '/>');
+    });
+
+    // simpul
+    var neigh = null;
+    if (focus != null) {
+      neigh = new Set([focus]);
+      an.actEdges.forEach(function (e) { if (e.from === focus) neigh.add(e.to); if (e.to === focus) neigh.add(e.from); });
+    }
+    an.members.forEach(function (m, i) {
+      var p = pos[i], g = geoms[i];
+      var dim = neigh && !neigh.has(i);
+      var sel = focus === i;
+      var a11y = opts.interactive ? ' tabindex="0" role="button" aria-pressed="' + (sel ? 'true' : 'false') + '" aria-label="' + esc('Anggota ' + m.no + ', ' + m.name) + '"' : '';
+      out.push('<g data-node="' + i + '"' + a11y + ' style="cursor:grab;touch-action:none" opacity="' + (dim ? 0.3 : 1) + '">');
+      out.push(shapeSVG(g, p.x, p.y, nodeFill(m, view, groupList), sel ? '#000000' : '#2b2f38', sel ? 2.8 : 1.3));
+      var label = view.label === 'nama' ? m.name : String(m.no);
+      out.push('<text x="' + p.x.toFixed(1) + '" y="' + p.y.toFixed(1) + '" dy="0.35em" text-anchor="middle" font-size="' + (view.label === 'nama' ? 12.5 : 13) + '" fill="' + INK + '" font-weight="600" style="pointer-events:none">' + esc(label) + '</text>');
+      if (view.label === 'nomor+nama') {
+        var ty = (p.y + g.hh + 13).toFixed(1), tx = p.x.toFixed(1);
+        out.push('<text x="' + tx + '" y="' + ty + '" text-anchor="middle" font-size="11.5" fill="none" stroke="#ffffff" stroke-width="3.6" stroke-linejoin="round" style="pointer-events:none">' + esc(m.name) + '</text>');
+        out.push('<text x="' + tx + '" y="' + ty + '" text-anchor="middle" font-size="11.5" fill="' + INK + '" style="pointer-events:none">' + esc(m.name) + '</text>');
+      }
+      out.push('</g>');
+    });
+
+    // legenda
+    var lw = 256, lx = W - lw - 12, ly = 56, pad = 14;
+    // label panjang dipecah menjadi maksimal 2 baris supaya nama kriteria tidak terpotong
+    var wrapLbl = function (t, n) {
+      if (t.length <= n) return [t];
+      var words = t.split(' '), l1 = '', i = 0;
+      while (i < words.length && (l1 ? l1 + ' ' + words[i] : words[i]).length <= n) { l1 = l1 ? l1 + ' ' + words[i] : words[i]; i++; }
+      if (!l1) { l1 = t.slice(0, n); return [l1, t.slice(n).length > n ? t.slice(n, n + n - 1) + '…' : t.slice(n)]; }
+      var l2 = words.slice(i).join(' ');
+      return [l1, l2.length > n ? l2.slice(0, n - 1) + '…' : l2];
+    };
+    var LIM = { line: 29, swatch: 26, text: 34, shape: 99, ring: 99, head: 99 };
+    rows.forEach(function (r) { r.lines = r.t === 'head' ? [r.label] : wrapLbl(r.label, LIM[r.t]); });
+    var ys = [], cur = ly + pad;
     rows.forEach(function (r, i) {
-      var y = ly + 18 + i * rowH;
+      if (r.t === 'head') cur += (i === 0 ? 0 : 8);
+      ys.push(cur + 13); cur += (r.t === 'head' ? 22 : 25) + (r.lines.length - 1) * 16;
+    });
+    var lh = cur - ly + 6;
+    var tx2 = function (x, y, r, fill) {
+      return '<text x="' + x + '" y="' + y + '" font-size="13" fill="' + fill + '">' + r.lines.map(function (ln, k) { return '<tspan x="' + x + '"' + (k ? ' dy="16"' : '') + '>' + esc(ln) + '</tspan>'; }).join('') + '</text>';
+    };
+    out.push('<rect x="' + lx + '" y="14" width="' + lw + '" height="30" rx="4" fill="#ffffff" stroke="#a8201a" stroke-width="1.5"/>');
+    out.push('<text x="' + (lx + lw / 2) + '" y="34" text-anchor="middle" font-size="14" font-weight="700" letter-spacing="4.5" fill="#a8201a">RAHASIA</text>');
+    out.push('<rect x="' + lx + '" y="' + ly + '" width="' + lw + '" height="' + lh + '" fill="#ffffff" stroke="#b9bfca" rx="4"/>');
+    rows.forEach(function (r, i) {
+      var y = ys[i];
       if (r.t === 'shape') {
-        out.push(shapeSVG(r.g, lx + 22, y - 4, '#fff', '#2b2f38', 1.1));
-        out.push('<text x="' + (lx + 42) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label) + '</text>');
+        out.push(shapeSVG(r.g, lx + 28, y - 4.5, '#ffffff', '#2b2f38', 1.3));
+        out.push(tx2(lx + 52, y, r, INK));
       } else if (r.t === 'line') {
         var mid = 'url(#ar' + r.color.slice(1) + ')';
-        if (!r.plain) {
-          out.push('<line x1="' + (lx + 10) + '" y1="' + (y - 4) + '" x2="' + (lx + 36) + '" y2="' + (y - 4) + '" stroke="' + r.color + '" stroke-width="1.8"' + (r.dash ? ' stroke-dasharray="' + r.dash + '"' : '') + ' marker-end="' + mid + '"' + (r.both ? ' marker-start="' + mid + '"' : '') + '/>');
-        } else {
-          out.push('<line x1="' + (lx + 10) + '" y1="' + (y - 4) + '" x2="' + (lx + 36) + '" y2="' + (y - 4) + '" stroke="' + r.color + '" stroke-width="1.8"' + (r.dash ? ' stroke-dasharray="' + r.dash + '"' : '') + '/>');
-        }
-        out.push('<text x="' + (lx + 44) + '" y="' + y + '" font-size="11.5" fill="' + (r.color.length && !r.plain ? r.color : '#1b2130') + '">' + esc(r.label.length > 26 ? r.label.slice(0, 25) + '…' : r.label) + '</text>');
+        out.push('<line x1="' + (lx + 14) + '" y1="' + (y - 4.5) + '" x2="' + (lx + 46) + '" y2="' + (y - 4.5) + '" stroke="' + r.color + '" stroke-width="2.4"' + (r.dash ? ' stroke-dasharray="' + r.dash + '"' : '') + (r.plain ? '' : ' marker-end="' + mid + '"' + (r.both ? ' marker-start="' + mid + '"' : '')) + '/>');
+        out.push(tx2(lx + 56, y, r, INK));
       } else if (r.t === 'swatch') {
-        out.push('<rect x="' + (lx + 15) + '" y="' + (y - 10) + '" width="14" height="12" rx="3" fill="' + r.fill + '" stroke="#2b2f38" stroke-width="0.9"/>');
-        out.push('<text x="' + (lx + 42) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label.length > 24 ? r.label.slice(0, 23) + '…' : r.label) + '</text>');
+        out.push('<rect x="' + (lx + 20) + '" y="' + (y - 13) + '" width="16" height="14" rx="3" fill="' + r.fill + '" stroke="#2b2f38" stroke-width="1"/>');
+        out.push(tx2(lx + 46, y, r, INK));
       } else if (r.t === 'text') {
-        out.push('<text x="' + (lx + 12) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label.length > 30 ? r.label.slice(0, 29) + '…' : r.label) + '</text>');
+        out.push(tx2(lx + 14, y, r, INK));
       } else if (r.t === 'head') {
-        out.push('<text x="' + (lx + 12) + '" y="' + y + '" font-size="10.5" font-weight="700" fill="#5d6678" letter-spacing="0.4">' + esc(r.label.toUpperCase()) + '</text>');
+        out.push('<text x="' + (lx + 14) + '" y="' + y + '" font-size="11.5" font-weight="700" fill="' + INK2 + '" letter-spacing="0.8">' + esc(r.label.toUpperCase()) + '</text>');
       } else if (r.t === 'ring') {
-        out.push('<circle cx="' + (lx + 22) + '" cy="' + (y - 4) + '" r="6" fill="' + (r.fill || 'none') + '" stroke="#8b93a1"/>');
-        out.push('<text x="' + (lx + 42) + '" y="' + y + '" font-size="11.5" fill="#1b2130">' + esc(r.label) + '</text>');
+        out.push('<circle cx="' + (lx + 28) + '" cy="' + (y - 4.5) + '" r="7" fill="' + (r.fill || 'none') + '" stroke="#8b93a1" stroke-width="1.2"/>');
+        out.push(tx2(lx + 52, y, r, INK));
       }
     });
     var owner = String(opts.owner || '').trim();
     var oname = owner || '(belum diisi)';
     if (oname.length > 38) oname = oname.slice(0, 37) + '…';
-    var by = H - 50;
-    out.push('<text x="22" y="' + by + '" font-size="10" fill="#6b7383">Penanggung jawab</text>');
-    out.push('<text x="22" y="' + (by + 14) + '" font-size="12.5" font-weight="700" fill="' + (owner ? '#1b2130' : '#b3261e') + '">' + esc(oname) + '</text>');
-    out.push('<text x="22" y="' + (by + 30) + '" font-size="10" fill="#6b7383">Pengembang aplikasi</text>');
-    out.push('<text x="22" y="' + (by + 43) + '" font-size="11" font-weight="600" fill="#1b2130">Hammad Zahid Muharram, M.Psi., Psikolog</text>');
+    var by = H - 54;
+    out.push('<text x="24" y="' + by + '" font-size="11" fill="' + INK2 + '">Penanggung jawab</text>');
+    out.push('<text x="24" y="' + (by + 16) + '" font-size="13.5" font-weight="700" fill="' + (owner ? INK : '#a8201a') + '">' + esc(oname) + '</text>');
+    out.push('<text x="24" y="' + (by + 33) + '" font-size="11" fill="' + INK2 + '">Pengembang aplikasi</text>');
+    out.push('<text x="24" y="' + (by + 47) + '" font-size="12.5" font-weight="600" fill="' + INK + '">Hammad Zahid Muharram, M.Psi., Psikolog</text>');
     out.push('</svg>');
     return out.join('');
   }
@@ -1060,14 +1250,30 @@ th.ch .dot { margin-right: 6px; }
     if (!S.nPos) return ['Belum ada pilihan positif yang terbaca pada kriteria aktif, sehingga analisis belum dapat disusun.'];
     var by = function (k) { return an.members.filter(function (m) { return m.cat === k; }); };
     var stars = by('bintang'), iso = by('isolat'), abai = by('abai');
-    out.push('Pada ' + cx.place + ' ini terdapat ' + S.N + ' ' + cx.unit + ' dengan ' + S.nPos + ' pilihan positif terbaca. Rata-rata tiap ' + cx.unit.split(' ')[0] + ' menerima ' + S.avgReceived.toFixed(1) + ' pilihan (skor terbobot rata-rata ' + S.mean.toFixed(1) + ', SD ' + S.sd.toFixed(1) + ').');
+    out.push('Pada ' + cx.place + ' ini terdapat ' + S.N + ' ' + cx.unit + ' dengan ' + S.nPos + ' pilihan positif terbaca. Rata-rata tiap ' + cx.unit.split(' ')[0] + ' menerima ' + S.avgReceived.toFixed(1).replace('.', ',') + ' pilihan (skor terbobot rata-rata ' + S.mean.toFixed(1).replace('.', ',') + ', SD ' + S.sd.toFixed(1).replace('.', ',') + ').');
     if (stars.length) out.push('Kategori populer (skor ≥ ' + S.zHigh + ' SD di atas rata-rata) ada ' + stars.length + ': ' + list(stars) + '. Kelompok ini menerima ' + pct(S.starShare) + ' dari seluruh pilihan, sehingga posisinya berpengaruh terhadap dinamika ' + cx.place + '.');
     else out.push('Tidak ada ' + cx.unit + ' yang melampaui batas populer, artinya pilihan relatif tersebar tanpa figur yang menonjol.');
     if (iso.length) out.push('Ada ' + iso.length + ' isolat (tidak dipilih siapa pun pada kriteria aktif): ' + list(iso) + '. Skor nol menggambarkan posisi dalam peta pilihan, belum tentu menunjukkan kesulitan sosial (bisa juga anggota baru, jarang hadir, atau berada di lingkaran lain di luar kelompok ini); perlu dikonfirmasi lewat observasi dan wawancara.');
     else out.push('Tidak ada isolat pada kriteria aktif; setiap ' + cx.unit.split(' ')[0] + ' setidaknya dipilih satu orang.');
     if (abai.length) out.push('Kategori terabaikan (skor ≤ ' + S.zLow + ' SD dari rata-rata namun tidak nol) mencakup ' + list(abai) + '.');
+    if (S.N >= 5) {
+      var uw = cx.unit.split(' ')[0], pcTop = Math.round(S.topN / S.N * 100);
+      if (S.topShare >= 0.25) {
+        out.push(S.topN + ' ' + uw + ' yang paling banyak dipilih (' + pcTop + '% dari kelompok) menerima ' + pct(S.topShare) + ' dari seluruh pilihan' + (iso.length ? ', sedangkan ' + iso.length + ' ' + uw + ' tidak dipilih sama sekali' : '') + '. Pilihan yang menumpuk pada sedikit orang, dengan sebagian lain sedikit atau tidak dipilih, lazim ditemukan pada kelompok apa pun dan disebut efek sosiodinamik (Moreno, 1934). Pola ini menggambarkan struktur pilihan dan belum tentu menandakan masalah, tetapi ' + uw + ' yang tidak dipilih perlu dicermati.');
+      } else {
+        out.push(S.topN + ' ' + uw + ' yang paling banyak dipilih (' + pcTop + '% dari kelompok) menerima ' + pct(S.topShare) + ' dari seluruh pilihan, sehingga pilihan relatif merata dan tidak menumpuk pada sedikit orang (bila benar-benar merata, bagiannya ' + pcTop + '%).');
+      }
+    }
     out.push('Terdapat ' + S.mutualPairs + ' pasangan timbal balik (indeks kohesi ' + pct1(S.cohesion) + ' dari seluruh pasangan yang mungkin, nilai kecil wajar karena tiap orang hanya memilih beberapa nama; ' + pct(S.reciprocity) + ' pilihan berbalas). ' +
       (an.cliques.length ? 'Pasangan tersebut membentuk ' + an.cliques.length + ' rangkaian timbal balik; yang terbesar beranggotakan ' + an.cliques[0].length + ' orang (' + an.cliques[0].map(function (i) { return an.members[i].name; }).slice(0, 6).join(', ') + (an.cliques[0].length > 6 ? ', …' : '') + ').' : 'Belum terbentuk rangkaian timbal balik.'));
+    if (S.expectedMutual != null) {
+      var ex = S.expectedMutual, ob = S.mutualPairs, dec1 = function (v) { return v.toFixed(1).replace('.', ','); };
+      var judge = (ob >= ex * 2 && ob - ex >= 2) ? 'Jumlah teramati jauh di atas perkiraan kebetulan, yang menunjukkan kecenderungan saling memilih melebihi peluang acak (oleh Moreno disebut tele).'
+        : (ob >= ex * 1.25 && ob - ex >= 1) ? 'Jumlah teramati di atas perkiraan kebetulan, meski selisihnya belum besar.'
+        : (ob <= ex * 0.75 && ex - ob >= 1) ? 'Jumlah teramati di bawah perkiraan kebetulan, sehingga saling memilih justru jarang terjadi.'
+        : 'Jumlah teramati tidak jauh dari perkiraan kebetulan, sehingga belum ada indikasi kuat saling memilih di luar peluang acak.';
+      out.push('Bila setiap ' + cx.unit.split(' ')[0] + ' memilih secara acak dengan jumlah pilihan yang sama, sekitar ' + dec1(ex) + ' pasangan timbal balik diharapkan muncul karena kebetulan, sedangkan yang teramati ' + ob + '. ' + judge + ' Perkiraan ini kasar dan tidak menggantikan uji statistik.');
+    }
     if (S.gender && S.gender.expected != null) {
       var d = S.gender.observed - S.gender.expected;
       out.push('Sebanyak ' + pct(S.gender.observed) + ' pilihan ditujukan ke sesama jenis kelamin, dibanding ' + pct(S.gender.expected) + ' yang diharapkan bila memilih acak. ' + (d > 0.1 ? 'Kecenderungan memilih sesama jenis kelamin cukup kuat.' : d < -0.1 ? 'Pilihan lintas jenis kelamin lebih banyak dari perkiraan acak.' : 'Selisihnya kecil sehingga tidak tampak segregasi yang nyata.'));
@@ -1245,12 +1451,14 @@ th.ch .dot { margin-right: 6px; }
   var LS_KEY = 'peta-sosiometri-v1';
 
   var P, V, cache = { sig: null, an: null, layout: null }, focus = null, dirty = true, tab = 'sosiogram', sortMode = 'skor', matrixCrit = 'all';
+  var ZOOMS = [1, 1.5, 2, 2.5, 3, 4], zoom = null, ctlInit = false;
+  var isNarrow = function () { return window.matchMedia ? window.matchMedia('(max-width: 640px)').matches : false; };
 
   /* ---------- keadaan ---------- */
   function defaultView(model) {
     return model === 'network'
       ? { model: 'network', colorBy: 'mutual', dashBy: 'none', mergeMutual: true, widthByRank: false, showNeg: true, label: 'nama', nodeFill: 'gender', groupBy: 'gender' }
-      : { model: 'target', colorBy: 'rank', dashBy: 'none', mergeMutual: false, widthByRank: true, showNeg: true, label: 'nomor', nodeFill: 'putih', groupBy: 'none' };
+      : { model: 'target', colorBy: 'rank', dashBy: 'rank', mergeMutual: false, widthByRank: true, showNeg: true, label: 'nomor', nodeFill: 'putih', groupBy: 'none' };
   }
   function defWeights(k, type) { if (type === 'neg') return new Array(k).fill(1); return k === 1 ? [1] : k === 2 ? [2, 1] : [3, 2, 1]; }
   function uid() { var n = 1; while (P.criteria.some(function (c) { return c.id === 'c' + n; })) n++; return 'c' + n; }
@@ -1330,7 +1538,8 @@ th.ch .dot { margin-right: 6px; }
   function show(t) {
     tab = t;
     $$('.panel').forEach(function (p) { p.hidden = p.id !== 'p-' + t; });
-    $$('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', b.dataset.tab === t ? 'true' : 'false'); });
+    $$('.tabs button').forEach(function (b) { var on = b.dataset.tab === t; b.setAttribute('aria-selected', on ? 'true' : 'false'); b.setAttribute('tabindex', on ? '0' : '-1'); });
+    if (t === 'sosiogram' && !ctlInit) { ctlInit = true; var cb = $('#ctlBox'); if (cb) cb.open = !isNarrow(); }
     if (t === 'instrumen') renderInstrumen();
     if (t === 'data') renderDataTable();
     if (t === 'sosiogram') { renderControls(); scheduleStage(); updateOwnerHint(); }
@@ -1341,7 +1550,7 @@ th.ch .dot { margin-right: 6px; }
   function critCard(c, i) {
     var w = '';
     if (c.type === 'pos') {
-      w = '<div class="f"><span style="font-size:12px;font-weight:600;color:var(--muted)">Bobot tiap peringkat</span><div class="wts">';
+      w = '<div class="f"><span class="f-l">Bobot tiap peringkat</span><div class="wts">';
       for (var k = 0; k < c.picks; k++) w += '<b>P' + (k + 1) + '</b><input type="number" step="0.5" min="0" data-cw="' + k + '" value="' + c.weights[k] + '" aria-label="Bobot pilihan ' + (k + 1) + '">';
       w += '</div></div>';
     }
@@ -1408,7 +1617,7 @@ th.ch .dot { margin-right: 6px; }
       h += '<td><button class="icon" type="button" data-act="delMember" aria-label="Hapus anggota ' + (i + 1) + '">×</button></td></tr>';
     });
     h += '</tbody></table>';
-    if (!P.members.length) h = '<p class="muted" style="padding:18px">Tabel masih kosong. Tambahkan anggota, tempel dari Excel, atau unggah berkas.</p>';
+    if (!P.members.length) h = '<p class="muted empty-note">Tabel masih kosong. Tambahkan anggota, tempel dari Excel, atau unggah berkas.</p>';
     $('#dataTable').innerHTML = h;
     refreshNames(); renderIssues();
     $('#pasteHint').textContent = 'Urutan kolom: Nama, JK (L/P), ' + c0.groupLabel + (cols.length ? ', ' + cols.map(function (x) { return x.c.name + (x.c.picks > 1 ? ' P' + x.k : ''); }).join(', ') : '') + '. Baris pertama boleh berupa judul kolom.';
@@ -1503,21 +1712,21 @@ th.ch .dot { margin-right: 6px; }
   function opt(list, cur) { return list.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === cur ? ' selected' : '') + '>' + o[1] + '</option>'; }).join(''); }
   function renderControls() {
     var hasNeg = P.criteria.some(function (c) { return c.type === 'neg' && V.active.indexOf(c.id) >= 0; });
-    var h = '<div class="card"><fieldset><legend>Model gambar</legend><div class="seg">' +
+    var h = '<div class="cs"><fieldset><legend>Model gambar</legend><div class="seg">' +
       '<button type="button" data-style="target" aria-pressed="' + (V.model === 'target') + '">Target<small>Cincin menurut status</small></button>' +
       '<button type="button" data-style="network" aria-pressed="' + (V.model === 'network') + '">Jaringan<small>Klaster menurut kelompok</small></button></div></fieldset></div>';
-    h += '<div class="card"><fieldset><legend>Kriteria ditampilkan</legend><div class="row">' +
+    h += '<div class="cs"><fieldset><legend>Kriteria ditampilkan</legend><div class="row">' +
       P.criteria.map(function (c) {
-        return '<label class="chk"><input type="checkbox" data-active="' + c.id + '"' + (V.active.indexOf(c.id) >= 0 ? ' checked' : '') + '><span><span class="dot" style="background:' + critColor(c) + ';margin-right:6px"></span>' + esc(c.name) + (c.type === 'neg' ? ' <span class="muted">(menolak)</span>' : '') + '</span></label>';
+        return '<label class="chk"><input type="checkbox" data-active="' + c.id + '"' + (V.active.indexOf(c.id) >= 0 ? ' checked' : '') + '><span><span class="dot" style="background:' + critColor(c) + ';margin-right:7px"></span>' + esc(c.name) + (c.type === 'neg' ? ' <span class="muted">(menolak)</span>' : '') + '</span></label>';
       }).join('') + '</div></fieldset></div>';
-    h += '<div class="card"><fieldset><legend>Garis</legend><div class="row">' +
+    h += '<div class="cs"><fieldset><legend>Garis</legend><div class="row">' +
       '<label class="f">Warna garis menunjukkan<select data-v="colorBy">' + opt([['rank', 'Peringkat pilihan'], ['criterion', 'Kriteria'], ['mutual', 'Timbal balik / satu arah']], V.colorBy) + '</select></label>' +
-      '<label class="f">Gaya garis menunjukkan<select data-v="dashBy">' + opt([['none', 'Semua garis utuh'], ['mutual', 'Timbal balik utuh, satu arah putus-putus'], ['rank', 'Peringkat: utuh, putus, titik-garis']], V.dashBy) + '</select></label>' +
+      '<label class="f">Gaya garis menunjukkan<select data-v="dashBy">' + opt([['none', 'Semua garis utuh'], ['mutual', 'Timbal balik utuh, satu arah putus-putus'], ['rank', 'Peringkat: utuh, putus, titik']], V.dashBy) + '</select></label>' +
       '<label class="chk"><input type="checkbox" data-v="mergeMutual"' + (V.mergeMutual ? ' checked' : '') + '><span>Gabungkan pilihan timbal balik menjadi satu garis dua panah</span></label>' +
       '<label class="chk"><input type="checkbox" data-v="widthByRank"' + (V.widthByRank ? ' checked' : '') + '><span>Garis lebih tebal untuk peringkat 1</span></label>' +
       (hasNeg ? '<label class="chk"><input type="checkbox" data-v="showNeg"' + (V.showNeg ? ' checked' : '') + '><span>Tampilkan penolakan (titik-titik ungu)</span></label>' : '') +
       '</div></fieldset></div>';
-    h += '<div class="card"><fieldset><legend>Simpul</legend><div class="row">' +
+    h += '<div class="cs"><fieldset><legend>Simpul</legend><div class="row">' +
       '<label class="f">Label<select data-v="label">' + opt([['nomor', 'Nomor'], ['nama', 'Nama'], ['nomor+nama', 'Nomor dan nama']], V.label) + '</select></label>' +
       '<label class="f">Warna isi<select data-v="nodeFill">' + opt([['putih', 'Putih'], ['gender', 'Jenis kelamin'], ['kategori', 'Kategori status'], ['grup', 'Grup']], V.nodeFill) + '</select></label>' +
       (V.model === 'network' ? '<label class="f">Kelompokkan berdasarkan<select data-v="groupBy">' + opt([['none', 'Tanpa pengelompokan'], ['gender', 'Jenis kelamin'], ['group', 'Grup']], V.groupBy) + '</select></label>' : '') +
@@ -1534,14 +1743,44 @@ th.ch .dot { margin-right: 6px; }
     clearTimeout(stageTimer);
     stageTimer = setTimeout(function () { drawStage(); paper.classList.remove('busy'); }, 30);
   }
+  function applyZoom() {
+    var paper = $('#paper'), svg = paper.querySelector('svg');
+    if (zoom == null) zoom = isNarrow() ? 2.5 : 1;
+    if (svg) svg.style.width = (zoom * 100) + '%';
+    var lbl = $('#zoomLbl'); if (lbl) lbl.textContent = Math.round(zoom * 100) + '%';
+    var zi = $('#zoomIn'), zo = $('#zoomOut');
+    if (zi) zi.disabled = zoom >= ZOOMS[ZOOMS.length - 1];
+    if (zo) zo.disabled = zoom <= ZOOMS[0];
+  }
+  function centerOnFigure() {
+    var paper = $('#paper'), lay = cache.layout;
+    if (!lay || !paper.scrollWidth) return;
+    var mx = 0, my = 0;
+    lay.pos.forEach(function (p) { mx += p.x; my += p.y; });
+    mx /= lay.pos.length; my /= lay.pos.length;
+    paper.scrollLeft = Math.max(0, mx / lay.W * paper.scrollWidth - paper.clientWidth / 2);
+    paper.scrollTop = Math.max(0, my / lay.H * paper.scrollHeight - paper.clientHeight / 2);
+  }
+  function setZoom(z) {
+    var paper = $('#paper');
+    var fx = paper.scrollWidth ? (paper.scrollLeft + paper.clientWidth / 2) / paper.scrollWidth : 0.5;
+    var fy = paper.scrollHeight ? (paper.scrollTop + paper.clientHeight / 2) / paper.scrollHeight : 0.5;
+    zoom = z; applyZoom();
+    if (z <= 1) { paper.scrollLeft = 0; paper.scrollTop = 0; return; }
+    paper.scrollLeft = Math.max(0, fx * paper.scrollWidth - paper.clientWidth / 2);
+    paper.scrollTop = Math.max(0, fy * paper.scrollHeight - paper.clientHeight / 2);
+  }
+  var stageCentered = false;
   function drawStage() {
     var c = ensure(), an = c.an, layout = c.layout, paper = $('#paper');
     if (!layout || an.N < 2) { paper.innerHTML = '<p class="empty">Tambahkan minimal 2 anggota di tab Data untuk membuat sosiogram.</p>'; $('#detail').innerHTML = ''; return; }
     var sub = an.N + ' anggota';
-    paper.innerHTML = S.renderSVG(an, layout, V, { title: P.meta.title || 'Sosiogram', subtitle: sub, focus: focus, owner: P.meta.owner });
+    paper.innerHTML = S.renderSVG(an, layout, V, { title: P.meta.title || 'Sosiogram', subtitle: sub, focus: focus, owner: P.meta.owner, interactive: true });
+    applyZoom();
+    if (!stageCentered) { stageCentered = true; if (zoom > 1) centerOnFigure(); }
     renderDetail();
   }
-  function chip(cat) { return '<span class="cat" style="background:' + S.CAT_FILL[cat] + '">' + S.CAT_LABEL[cat] + '</span>'; }
+  function chip(cat) { return '<span class="cat" style="--c:' + S.CAT_FILL[cat] + '">' + S.CAT_LABEL[cat] + '</span>'; }
   function nm(an, i) { return esc(an.members[i].name) + ' (' + an.members[i].no + ')'; }
   function renderDetail() {
     var d = $('#detail'), an = cache.an;
@@ -1584,6 +1823,14 @@ th.ch .dot { margin-right: 6px; }
       if (!moved) focus = focus === id ? null : id;
       drawStage();
     }
+    paper.addEventListener('keydown', function (e) {
+      var g = e.target.closest ? e.target.closest('[data-node]') : null;
+      if (e.key === 'Escape' && focus != null) { var old = focus; focus = null; drawStage(); var og = paper.querySelector('[data-node="' + old + '"]'); if (og) og.focus({ preventScroll: true }); return; }
+      if (!g || (e.key !== 'Enter' && e.key !== ' ')) return;
+      e.preventDefault();
+      var id = +g.dataset.node; focus = focus === id ? null : id; drawStage();
+      var ng = paper.querySelector('[data-node="' + id + '"]'); if (ng) ng.focus({ preventScroll: true });
+    });
     paper.addEventListener('pointerup', end);
     paper.addEventListener('pointercancel', function () { drag = null; drawStage(); });
   }
@@ -1697,7 +1944,9 @@ th.ch .dot { margin-right: 6px; }
       ['Rata-rata skor', +Sm.mean.toFixed(3)], ['SD skor (populasi)', +Sm.sd.toFixed(3)], ['Batas populer (z)', Sm.zHigh], ['Batas terabaikan (z)', Sm.zLow],
       ['Populer', Sm.counts.bintang], ['Rata-rata', Sm.counts.rata], ['Terabaikan', Sm.counts.abai], ['Isolat', Sm.counts.isolat],
       ['Pasangan timbal balik', Sm.mutualPairs], ['Indeks kohesi (pasangan timbal balik / seluruh pasangan)', +Sm.cohesion.toFixed(4)],
-      ['Persentase pilihan berbalas', +Sm.reciprocity.toFixed(4)], ['Rangkaian timbal balik', Sm.cliques]
+      ['Pasangan timbal balik diharapkan bila memilih acak (perkiraan kasar)', Sm.expectedMutual != null ? +Sm.expectedMutual.toFixed(2) : ''],
+      ['Persentase pilihan berbalas', +Sm.reciprocity.toFixed(4)], ['Rangkaian timbal balik', Sm.cliques],
+      ['Bagian pilihan yang diterima 20% anggota teratas', +Sm.topShare.toFixed(4)]
     ].concat([[''], ['Narasi']]).concat(S.narrative(an, P.meta.context).map(function (t) { return [t]; })), [52, 60]);
     var posCrits = an.crits.filter(function (x) { return x.type === 'pos'; });
     var head = ['No', 'Nama', 'JK', 'Grup'];
@@ -1750,13 +1999,13 @@ th.ch .dot { margin-right: 6px; }
     var c = ensure(), an = c.an, S0 = an.summary, box = $('#results');
     if (an.N < 2) { box.innerHTML = '<div class="card"><p class="muted">Tambahkan data di tab Data untuk melihat hasil.</p></div>'; return; }
     var cx = ctx(), h = '';
-    if (!(P.meta.owner || '').trim()) h += '<div class="issue-box" style="margin-bottom:16px">Nama penanggung jawab data belum diisi, sehingga gambar dan Excel hasil ekspor akan bertanda “(belum diisi)”. <button class="btn" type="button" data-goto="instrumen">Isi di tab Instrumen</button></div>';
+    if (!(P.meta.owner || '').trim()) h += '<div class="issue-box act" style="margin-bottom:16px">Nama penanggung jawab data belum diisi, sehingga gambar dan Excel hasil ekspor akan bertanda “(belum diisi)”. <button class="btn" type="button" data-goto="instrumen">Isi di tab Instrumen</button></div>';
     h += '<div class="card"><div class="row-between"><h2>Ringkasan kelompok</h2><button class="btn primary" type="button" id="btnXlsx">Unduh Excel</button></div>' +
       '<p class="lead">Kriteria aktif: ' + an.crits.map(function (x) { return esc(x.name); }).join(', ') + '. Ubah pilihan kriteria di tab Sosiogram.</p>' +
       '<dl class="stats">' +
       stat('Anggota', S0.N) + stat('Pilihan positif', S0.nPos) + (S0.nNeg ? stat('Penolakan', S0.nNeg) : '') +
       stat('Populer', S0.counts.bintang) + stat('Terabaikan', S0.counts.abai) + stat('Isolat', S0.counts.isolat) +
-      stat('Pasangan timbal balik', S0.mutualPairs) + stat('Pilihan berbalas', pct(S0.reciprocity)) + stat('Indeks kohesi', pct1(S0.cohesion)) +
+      stat('Pasangan timbal balik', S0.mutualPairs + (S0.expectedMutual != null ? ' <small>acak ≈ ' + S0.expectedMutual.toFixed(1).replace('.', ',') + '</small>' : '')) + stat('Pilihan berbalas', pct(S0.reciprocity)) + stat('Indeks kohesi', pct1(S0.cohesion)) +
       stat('Rangkaian timbal balik', S0.cliques) + stat('Rata-rata skor', S0.mean.toFixed(1).replace('.', ',') + ' <small>SD ' + S0.sd.toFixed(1).replace('.', ',') + '</small>') + '</dl></div>';
     h += '<div class="card narr"><h2>Interpretasi otomatis</h2><p class="lead">Disusun dari angka di atas untuk konteks ' + esc(cx.place) + '. Sunting seperlunya sebelum dipakai dalam laporan.</p>' + S.narrative(an, P.meta.context).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>';
 
@@ -1764,7 +2013,7 @@ th.ch .dot { margin-right: 6px; }
     var ms = an.members.slice();
     if (sortMode === 'skor') ms.sort(function (a, b) { return b.score - a.score || a.no - b.no; });
     var hasGroup = ms.some(function (m) { return m.group; });
-    h += '<div class="card"><div class="row-between"><h2>Skor individu</h2><label class="f" style="flex-direction:row;align-items:center;gap:8px">Urutkan<select id="sortSel" style="width:auto"><option value="skor"' + (sortMode === 'skor' ? ' selected' : '') + '>Skor tertinggi</option><option value="no"' + (sortMode === 'no' ? ' selected' : '') + '>Nomor urut</option></select></label></div>' +
+    h += '<div class="card"><div class="row-between"><h2>Skor individu</h2><label class="f inl">Urutkan<select id="sortSel"><option value="skor"' + (sortMode === 'skor' ? ' selected' : '') + '>Skor tertinggi</option><option value="no"' + (sortMode === 'no' ? ' selected' : '') + '>Nomor urut</option></select></label></div>' +
       '<div class="tblwrap"><table class="rtbl"><thead><tr><th class="num">No</th><th>Nama</th><th>JK</th>' + (hasGroup ? '<th>Grup</th>' : '') + '<th class="num">Dipilih</th><th class="num">P1</th><th class="num">P2</th><th class="num">P3</th><th class="num">Skor</th><th class="num">z</th><th>Kategori</th><th class="num">Timbal balik</th>' + (S0.nNeg ? '<th class="num">Ditolak</th>' : '') + (an.coie ? '<th>Coie</th>' : '') + '</tr></thead><tbody>';
     var posCrits = an.crits.filter(function (x) { return x.type === 'pos'; });
     ms.forEach(function (m) {
@@ -1779,7 +2028,7 @@ th.ch .dot { margin-right: 6px; }
     // per kriteria
     h += '<div class="card"><h2>Per kriteria</h2><div class="tblwrap"><table class="rtbl"><thead><tr><th>Kriteria</th><th>Jenis</th><th class="num">Pilihan terbaca</th><th class="num">Pasangan timbal balik</th><th class="num">Tidak dipilih</th><th>Paling banyak dipilih</th></tr></thead><tbody>' +
       an.perCrit.map(function (p) {
-        return '<tr><td><span class="dot" style="background:' + critColor(p.crit) + ';margin-right:6px"></span>' + esc(p.crit.name) + '</td><td>' + (p.crit.type === 'pos' ? 'Memilih' : 'Menolak') + '</td><td class="num">' + p.edges + '</td><td class="num">' + p.mutualPairs + '</td><td class="num">' + p.isolates + '</td><td>' + p.top.filter(function (t) { return t.n > 0; }).map(function (t) { return esc(t.m.name) + ' (' + t.n + ')'; }).join(', ') + '</td></tr>';
+        return '<tr><td><span class="dot" style="background:' + critColor(p.crit) + ';margin-right:6px"></span>' + esc(p.crit.name) + '</td><td>' + (p.crit.type === 'pos' ? 'Memilih' : 'Menolak') + '</td><td class="num">' + p.edges + '</td><td class="num">' + p.mutualPairs + (p.expectedMutual != null ? ' <small>acak ≈ ' + p.expectedMutual.toFixed(1).replace('.', ',') + '</small>' : '') + '</td><td class="num">' + p.isolates + '</td><td>' + p.top.filter(function (t) { return t.n > 0; }).map(function (t) { return esc(t.m.name) + ' (' + t.n + ')'; }).join(', ') + '</td></tr>';
       }).join('') + '</tbody></table></div></div>';
 
     // timbal balik & klik
@@ -1804,7 +2053,7 @@ th.ch .dot { margin-right: 6px; }
     }
 
     // sosiomatriks
-    h += '<div class="card"><div class="row-between"><h2>Sosiomatriks</h2><label class="f" style="flex-direction:row;align-items:center;gap:8px">Kriteria<select id="mxSel" style="width:auto"><option value="all">Gabungan positif (terbobot)</option>' + an.crits.map(function (x) { return '<option value="' + x.id + '"' + (matrixCrit === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('') + '</select></label></div>' +
+    h += '<div class="card"><div class="row-between"><h2>Sosiomatriks</h2><label class="f inl">Kriteria<select id="mxSel"><option value="all">Gabungan positif (terbobot)</option>' + an.crits.map(function (x) { return '<option value="' + x.id + '"' + (matrixCrit === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('') + '</select></label></div>' +
       '<p class="note" style="margin-bottom:8px">Baris = pemilih, kolom = yang dipilih. Angka = bobot pilihan (gabungan) atau peringkat (satu kriteria); tanda − = penolakan.</p>' + matrixHTML(an) + '</div>';
     box.innerHTML = h;
   }
@@ -1829,7 +2078,7 @@ th.ch .dot { margin-right: 6px; }
         if (i === j) { h += '<td class="self"></td>'; return; }
         var k = i + '|' + j, v = cells[k], ng = neg[k];
         if (v) { tot += v; colTot[j] += v; }
-        var bg = v ? 'background:rgba(29,92,140,' + Math.min(0.15 + v * 0.14, 0.75).toFixed(2) + ');color:' + (v >= 3 ? '#fff' : 'inherit') : '';
+        var bg = v ? 'background:rgba(31,108,159,' + Math.min(0.12 + v * 0.12, 0.6).toFixed(2) + ')' : '';
         h += '<td' + (ng && !v ? ' class="neg"' : '') + (bg ? ' style="' + bg + '"' : '') + '>' + (v ? v : (ng ? '−' : '')) + '</td>';
       });
       h += '<td><strong>' + tot + '</strong></td></tr>';
@@ -1861,6 +2110,15 @@ th.ch .dot { margin-right: 6px; }
   /* ---------- pengikatan peristiwa ---------- */
   function bind() {
     $$('.tabs button').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.tab); }); });
+    $('.tabs').addEventListener('keydown', function (e) {
+      var keys = { ArrowRight: 1, ArrowLeft: -1, Home: 'first', End: 'last' };
+      if (!(e.key in keys)) return;
+      var btns = $$('.tabs button'), i = btns.indexOf(document.activeElement);
+      if (i < 0) return;
+      e.preventDefault();
+      var n = keys[e.key] === 'first' ? 0 : keys[e.key] === 'last' ? btns.length - 1 : (i + keys[e.key] + btns.length) % btns.length;
+      show(btns[n].dataset.tab); btns[n].focus();
+    });
     document.addEventListener('click', function (e) { var g = e.target.closest && e.target.closest('[data-goto]'); if (g) show(g.dataset.goto); });
     $('#btnSample2').addEventListener('click', function () { loadSample('dua'); });
     $('#btnSample3').addEventListener('click', function () { loadSample('multi'); });
@@ -1971,6 +2229,9 @@ th.ch .dot { margin-right: 6px; }
       persist();
       if (k === 'label' || k === 'groupBy') scheduleStage(); else drawStage();
     });
+    $('#zoomIn').addEventListener('click', function () { var n = ZOOMS.filter(function (z) { return z > zoom + 1e-6; })[0]; if (n) setZoom(n); });
+    $('#zoomOut').addEventListener('click', function () { var n = ZOOMS.filter(function (z) { return z < zoom - 1e-6; }).pop(); if (n) setZoom(n); });
+    $('#zoomFit').addEventListener('click', function () { setZoom(1); });
     $('#btnRelayout').addEventListener('click', function () { V.seed++; dirty = true; cache.sig = null; persist(); scheduleStage(); });
     $('#btnPng').addEventListener('click', exportPng);
     $('#btnSvg').addEventListener('click', exportSvg);
